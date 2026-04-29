@@ -8,12 +8,17 @@ interface DashboardLayoutProps {
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
-  const menuItems = [
-    { icon: <LayoutDashboard size={20} />, label: "Dashboard", href: "/dashboard", active: true },
-    { icon: <Target size={20} />, label: "Avaliação", href: "/evaluations/new", active: false },
-    { icon: <Users size={20} />, label: "Time (Líder)", href: "/leader", active: false },
-    { icon: <Settings size={20} />, label: "Sistema", href: "/admin/cycles", active: false },
+  // Simulação de papel do usuário (em produção viria do Profile no Supabase)
+  const userRole = "seller"; 
+
+  const allItems = [
+    { icon: <LayoutDashboard size={20} />, label: "Dashboard", href: "/dashboard", roles: ["seller", "leader", "admin"] },
+    { icon: <Target size={20} />, label: "Avaliação", href: "/evaluations/new", roles: ["seller", "leader", "admin"] },
+    { icon: <Users size={20} />, label: "Time (Líder)", href: "/leader", roles: ["leader", "admin"] },
+    { icon: <Settings size={20} />, label: "Sistema", href: "/admin/cycles", roles: ["admin"] },
   ];
+
+  const menuItems = allItems.filter(item => item.roles.includes(userRole));
 
   return (
     <div className="flex min-h-screen bg-vulp-void text-vulp-white">

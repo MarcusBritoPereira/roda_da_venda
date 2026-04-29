@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { autoAssignPDI } from './automation'
 
 export async function getTeamMembers() {
   const supabase = await createClient()
@@ -35,16 +36,29 @@ export async function getTeamMembers() {
 export async function saveLeaderCalibration(evaluationId: string, leaderScore: number, comment: string) {
   const supabase = await createClient()
   
+  // 1. Buscar dados da avaliação para a automação
+  const { data: evalData } = await supabase
+    .from('evaluations')
+    .select('seller_id, areas(name)')
+    .eq('id', evaluationId)
+    .single()
+
+  // 2. Atualizar a nota do líder
   const { error } = await supabase
     .from('evaluations')
     .update({
       leader_score: leaderScore,
       leader_comment: comment,
-      // Aqui o cálculo do calibrated_score seria disparado por uma trigger ou calculado aqui
     })
     .eq('id', evaluationId)
 
   if (error) throw error
+
+  // 3. Disparar automação de PDI se necessário
+  if (evalData && evalData.areas) {
+    await autoAssignPDI(evalData.seller_id, (evalData.areas as any).name, leaderScore)
+  }
+
   revalidatePath('/leader')
 }
 

@@ -5,9 +5,12 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { RadarWheel } from "@/components/charts/RadarWheel";
 import { ScoreBar } from "@/components/ui/ScoreBar";
+import { MissionLog } from "@/components/dashboard/MissionLog";
 import { TrendingUp, Target, AlertTriangle, Calendar } from "lucide-react";
+import { getMyPDIs } from "@/actions/pdis";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const missions = await getMyPDIs();
   // Dados mockados para preview
   const labels = ["Conversão", "Ticket Médio", "Abordagem", "Volume", "Follow-up", "Prospecção", "Comunicação", "Execução", "Disciplina", "Liderança"];
   const scores = [7.2, 5.5, 8.4, 4.2, 3.8, 6.1, 7.5, 5.9, 8.0, 4.5];
@@ -60,30 +63,9 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          {/* Indicators List */}
-          <div className="space-y-6">
-            <Card className="h-full">
-              <CardHeader>
-                <CardTitle>Indicadores Críticos</CardTitle>
-                <CardDescription>Foco de desenvolvimento para este ciclo</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="p-4 rounded-xl bg-status-dismiss/5 border border-status-dismiss/20">
-                  <ScoreBar label="Follow-up" score={3.8} color="var(--color-status-dismiss)" className="mb-2" />
-                  <p className="text-[10px] text-status-dismiss font-medium uppercase tracking-wider">
-                    Gatilho Fator Realidade Ativado: Nota limitada por baixo volume de CRM.
-                  </p>
-                </div>
-                
-                <ScoreBar label="Ticket Médio" score={5.5} color="var(--color-status-train)" />
-                <ScoreBar label="Volume de Prospecção" score={4.2} color="var(--color-status-critical)" />
-                <ScoreBar label="Liderança" score={4.5} color="var(--color-status-critical)" />
-                
-                <div className="pt-4 mt-4 border-t border-ui-border">
-                  <ScoreBar label="Conversão" score={7.2} color="var(--color-vulp-lilac)" />
-                </div>
-              </CardContent>
-            </Card>
+          {/* Missões e PDI */}
+          <div className="lg:col-span-1">
+            <MissionLog missions={missions} />
           </div>
         </div>
 
