@@ -12,11 +12,11 @@ export default async function IndividualCalibrationPage({ params }: { params: Pr
 
   // Mock de dados para a página de calibragem individual
   // Em produção, aqui buscaríamos as notas reais dadas pelo vendedor para este sellerId
-  const mockAreasWithScores = areas.length > 0 ? areas.map(a => ({
+  const mockAreasWithScores = areas.length > 0 ? areas.map((a, index) => ({
     ...a,
-    self_score: Math.floor(Math.random() * 5) + 5,
+    self_score: 5 + (index % 5),
     justification: "Acredito que tive um bom desempenho nesta área, superando os desafios do mês.",
-    real_metric_value: Math.floor(Math.random() * 40) + 10,
+    real_metric_value: 10 + (index * 7),
     threshold: 25
   })) : [
     { id: '1', name: 'Conversão', self_score: 8, justification: "Minha taxa de fechamento subiu 10% este mês.", real_metric_value: 22, threshold: 25 },

@@ -56,14 +56,13 @@ export async function saveLeaderCalibration(evaluationId: string, leaderScore: n
 
   // 3. Disparar automação de PDI se necessário
   if (evalData && evalData.areas) {
-    await autoAssignPDI(evalData.seller_id, (evalData.areas as any).name, leaderScore)
+    await autoAssignPDI(evalData.seller_id, (evalData.areas as { name?: string }).name, leaderScore)
   }
 
   revalidatePath('/leader')
 }
 
 export async function getTeamStats() {
-  const supabase = await createClient()
   // Mock ou consulta complexa de agregação para média do time
   return {
     avgScore: 6.8,

@@ -3,13 +3,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { z } from 'zod'
-
-const evaluationSchema = z.object({
-  cycle_id: z.string().uuid(),
-  scores: z.record(z.string().uuid(), z.number().min(1).max(10)),
-  justifications: z.record(z.string().uuid(), z.string().optional()),
-})
 
 export async function submitEvaluation(formData: FormData) {
   const supabase = await createClient()

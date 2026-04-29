@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { RadarWheel } from "@/components/charts/RadarWheel";
-import { ChevronRight, MessageSquare, AlertCircle } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 interface TeamMemberCardProps {
@@ -13,7 +13,7 @@ interface TeamMemberCardProps {
     id: string;
     full_name: string;
     avatar_url?: string;
-    evaluations?: any[];
+    evaluations?: Array<{ self_score?: number; leader_score?: number }>;
   }
 }
 

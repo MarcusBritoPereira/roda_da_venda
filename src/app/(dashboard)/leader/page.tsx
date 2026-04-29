@@ -1,7 +1,6 @@
 import React from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { TeamMemberCard } from "@/components/leader/TeamMemberCard";
 import { LeaderToolbar } from "@/components/leader/LeaderToolbar";
@@ -70,7 +69,7 @@ export default async function LeaderDashboardPage() {
           <div className="relative z-10 space-y-4 max-w-lg">
             <h3 className="text-2xl font-black italic uppercase tracking-tight leading-none text-white">Insight do Ciclo: <br/>Foco em Follow-up</h3>
             <p className="text-white/80 text-sm leading-relaxed">
-              O time apresenta uma autoavaliação 25% superior aos dados reais de CRM em "Follow-up". 
+              O time apresenta uma autoavaliação 25% superior aos dados reais de CRM em &quot;Follow-up&quot;. 
               Recomendamos uma reunião de alinhamento sobre o preenchimento da ferramenta para evitar disparidades no Fator Realidade.
             </p>
             <Button variant="ghost" className="bg-white text-vulp-electric hover:bg-vulp-white rounded-none uppercase text-xs font-bold tracking-widest">

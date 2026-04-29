@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { RadarWheel } from "@/components/charts/RadarWheel";
-import { ScoreBar } from "@/components/ui/ScoreBar";
 import { MissionLog } from "@/components/dashboard/MissionLog";
 import { TrendingUp, Target, AlertTriangle, Calendar } from "lucide-react";
 import { getMyPDIs } from "@/actions/pdis";
@@ -34,7 +33,7 @@ export default async function DashboardPage() {
                 <div className="p-2 bg-ui-surface rounded-lg border border-ui-border">
                   {card.icon}
                 </div>
-                <Badge variant={card.status as any}>{card.statusLabel}</Badge>
+                <Badge variant={card.status as "default" | "promote" | "train" | "critical"}>{card.statusLabel}</Badge>
               </div>
               <div>
                 <p className="text-xs text-ui-muted uppercase tracking-widest font-bold mb-1">{card.label}</p>

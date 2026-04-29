@@ -2,11 +2,11 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { RadarWheel } from "@/components/charts/RadarWheel";
-import { ScoreBar } from "@/components/ui/ScoreBar";
 import { saveLeaderCalibration } from "@/actions/leader";
 import { ChevronRight, Save, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { Badge } from "@/components/ui/Badge";
 
 interface Area {
   id: string;
@@ -71,7 +71,7 @@ export function CalibrationForm({ sellerName, areas, evaluationId }: Calibration
                 <span className="text-ui-muted mb-1">/ 10</span>
               </div>
               <p className="text-xs text-ui-muted leading-relaxed italic">
-                "{area.justification || "Nenhuma justificativa fornecida."}"
+                &quot;{area.justification || "Nenhuma justificativa fornecida."}&quot;
               </p>
             </div>
 
@@ -155,6 +155,8 @@ export function CalibrationForm({ sellerName, areas, evaluationId }: Calibration
             </Button>
           ) : (
             <Button 
+              type="button"
+              onClick={() => void saveLeaderCalibration(evaluationId, currentLeaderScore || area.self_score, comments[area.id] || "")}
               className="rounded-none bg-status-promote px-12 shadow-glow-electric border-none"
             >
               Salvar Calibragem <Save size={18} className="ml-2" />

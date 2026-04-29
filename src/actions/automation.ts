@@ -1,7 +1,6 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { revalidatePath } from 'next/cache'
 
 /**
  * Lógica de Automação: Atribui PDIs baseados na nota de calibragem

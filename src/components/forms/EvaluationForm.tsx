@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
-import { Input } from "@/components/ui/Input";
 import { submitEvaluation } from "@/actions/evaluations";
 import { ChevronRight, ChevronLeft, Send, Info } from "lucide-react";
 
@@ -53,7 +52,7 @@ export function EvaluationForm({ areas, cycleId }: EvaluationFormProps) {
         <div className="space-y-6">
           <div className="p-6 bg-ui-surface/20 border-l-2 border-vulp-brand backdrop-blur-sm">
             <p className="text-lg text-ui-muted leading-relaxed italic">
-              "{area.description || "Como você avalia sua performance nesta área durante este ciclo?"}"
+              &quot;{area.description || "Como você avalia sua performance nesta área durante este ciclo?"}&quot;
             </p>
           </div>
           
