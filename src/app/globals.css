@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+@theme {
+  /* PALETA PRIMÁRIA VULP */
+  --color-vulp-electric: #4500f9;
+  --color-vulp-lilac: #cd82ff;
+  --color-vulp-magenta: #8e1aa1;
+  --color-vulp-deep: #2a042d;
+  --color-vulp-void: #14021c;
+  --color-vulp-white: #f1f1f1;
+
+  /* SEMÂNTICAS RODA DA VENDA */
+  --color-status-promote: #22c55e;
+  --color-status-train: #eab308;
+  --color-status-critical: #f97316;
+  --color-status-dismiss: #ef4444;
+
+  /* SUPERFÍCIES UI */
+  --color-ui-surface: #1a0a1f;
+  --color-ui-border: #3d1a4a;
+  --color-ui-muted: #7c5a8a;
+  --color-ui-disabled: #4a2e55;
+
+  /* TIPOGRAFIA */
+  --font-display: "Inter", sans-serif;
+  --font-body: "Inter", sans-serif;
+
+  /* SOMBRAS & GLOWS */
+  --shadow-glow-electric: 0 0 24px rgba(69, 0, 249, 0.5);
+  --shadow-glow-lilac: 0 0 16px rgba(205, 130, 255, 0.35);
+  --shadow-card: 0 4px 24px rgba(20, 2, 28, 0.6);
+
+  /* GRADIENTES */
+  --background-vulp-dark: linear-gradient(135deg, #cd82ff 0%, #43148b 45%, #2a042b 100%);
+  --background-vulp-brand: linear-gradient(135deg, #cd82ff 0%, #944cfc 50%, #4500f9 100%);
+}
+
+:root {
+  --background: #14021c;
+  --foreground: #f1f1f1;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+/* Custom Utilities for VULP */
+@utility vulp-glow {
+  box-shadow: var(--shadow-glow-electric);
+}
+
+@utility vulp-card {
+  background: var(--color-ui-surface);
+  border: 1px solid var(--color-ui-border);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-card);
+}
+
+@utility bg-vulp-brand {
+  background: var(--background-vulp-brand);
+}
+
+@utility bg-vulp-dark {
+  background: var(--background-vulp-dark);
+}

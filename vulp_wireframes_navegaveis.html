@@ -1,0 +1,869 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:var(--color-background-tertiary);color:var(--color-text-primary);font-size:14px}
+.app{display:flex;flex-direction:column;min-height:600px}
+.topbar{background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);padding:0 16px;display:flex;align-items:center;gap:0;height:44px;flex-shrink:0}
+.tb-logo{font-size:13px;font-weight:500;padding-right:16px;border-right:0.5px solid var(--color-border-tertiary);margin-right:16px}
+.tb-logo span{color:var(--color-text-secondary);font-weight:400;font-size:11px;display:block}
+.tb-nav{display:flex;gap:0;flex:1}
+.tb-nav button{padding:0 14px;height:44px;background:none;border:none;border-bottom:2px solid transparent;font-size:12px;color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.tb-nav button.active{color:var(--color-text-primary);border-bottom-color:#7F77DD;font-weight:500}
+.tb-nav button:hover:not(.active){color:var(--color-text-primary);background:var(--color-background-secondary)}
+.profile-sw{display:flex;gap:6px;margin-left:auto;align-items:center}
+.profile-sw span{font-size:11px;color:var(--color-text-secondary)}
+.pill{padding:3px 10px;border-radius:12px;border:0.5px solid var(--color-border-secondary);font-size:11px;cursor:pointer;background:none;color:var(--color-text-secondary);transition:all .15s}
+.pill.on{background:#EEEDFE;color:#3C3489;border-color:#AFA9EC}
+.layout{display:flex;flex:1;overflow:hidden}
+.sidebar{width:168px;background:var(--color-background-primary);border-right:0.5px solid var(--color-border-tertiary);padding:12px 0;flex-shrink:0}
+.sb-item{display:flex;align-items:center;gap:8px;padding:8px 14px;font-size:12px;color:var(--color-text-secondary);cursor:pointer;border-left:2px solid transparent;transition:all .15s}
+.sb-item.active{color:var(--color-text-primary);background:var(--color-background-secondary);border-left-color:#7F77DD;font-weight:500}
+.sb-item:hover:not(.active){background:var(--color-background-secondary);color:var(--color-text-primary)}
+.sb-icon{width:14px;height:14px;opacity:.6;flex-shrink:0}
+.sb-section{padding:10px 14px 4px;font-size:10px;color:var(--color-text-tertiary);letter-spacing:.06em;text-transform:uppercase}
+.content{flex:1;overflow-y:auto;padding:20px}
+.page{display:none}
+.page.active{display:block}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px}
+.card-sm{padding:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.metric{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px}
+.metric .lbl{font-size:11px;color:var(--color-text-secondary);margin-bottom:4px}
+.metric .val{font-size:22px;font-weight:500}
+.metric .sub{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.sec-title{font-size:13px;font-weight:500;margin-bottom:12px;color:var(--color-text-primary)}
+.sec-sub{font-size:11px;color:var(--color-text-secondary);margin-bottom:12px}
+.row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.row:last-child{border-bottom:none}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:500}
+.b-promote{background:#EAF3DE;color:#3B6D11}
+.b-train{background:#FAEEDA;color:#854F0B}
+.b-critical{background:#FAECE7;color:#993C1D}
+.b-dismiss{background:#FCEBEB;color:#A32D2D}
+.b-purple{background:#EEEDFE;color:#3C3489}
+.b-gray{background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.b-blue{background:#E6F1FB;color:#0C447C}
+.dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;display:inline-block}
+.bar-wrap{flex:1;height:5px;background:var(--color-border-tertiary);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width .4s}
+.btn-primary{padding:7px 16px;background:#7F77DD;color:white;border:none;border-radius:var(--border-radius-md);font-size:12px;cursor:pointer;font-weight:500}
+.btn-primary:hover{background:#534AB7}
+.btn-ghost{padding:7px 16px;background:none;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:12px;cursor:pointer;color:var(--color-text-primary)}
+.btn-ghost:hover{background:var(--color-background-secondary)}
+.btn-danger{padding:7px 16px;background:#E24B4A;color:white;border:none;border-radius:var(--border-radius-md);font-size:12px;cursor:pointer;font-weight:500}
+.avatar{width:28px;height:28px;border-radius:50%;background:#EEEDFE;color:#3C3489;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tag-step{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:var(--border-radius-md);background:var(--color-background-secondary);font-size:12px;cursor:pointer;border:0.5px solid var(--color-border-tertiary)}
+.tag-step:hover{border-color:var(--color-border-secondary)}
+.tag-step.done{background:#EAF3DE;border-color:#C0DD97;color:#27500A}
+.tag-step.active-s{background:#EEEDFE;border-color:#AFA9EC;color:#3C3489}
+.input-field{width:100%;padding:7px 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:13px;background:var(--color-background-primary);color:var(--color-text-primary);outline:none}
+.input-field:focus{border-color:#7F77DD;box-shadow:0 0 0 2px #EEEDFE}
+.form-label{font-size:12px;color:var(--color-text-secondary);margin-bottom:5px;display:block}
+.score-box{width:32px;height:32px;border-radius:var(--border-radius-md);background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;flex-shrink:0}
+.score-box.sel{background:#7F77DD;color:white;border-color:#534AB7}
+.score-box:hover:not(.sel){background:var(--color-background-secondary);border-color:#7F77DD}
+.gap-indicator{padding:6px 10px;border-radius:var(--border-radius-md);font-size:11px;font-weight:500}
+.gap-ok{background:#EAF3DE;color:#3B6D11}
+.gap-warn{background:#FAEEDA;color:#854F0B}
+.gap-bad{background:#FAECE7;color:#993C1D}
+.radar-svg{display:block;margin:0 auto}
+.progress-steps{display:flex;align-items:center;gap:0;margin-bottom:20px}
+.pstep{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.pstep-circle{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--color-border-secondary);display:flex;align-items:center;justify-content:center;font-size:11px;background:var(--color-background-primary);color:var(--color-text-secondary)}
+.pstep-circle.done{background:#7F77DD;border-color:#7F77DD;color:white}
+.pstep-circle.curr{background:#EEEDFE;border-color:#7F77DD;color:#3C3489;font-weight:500}
+.pstep-label{font-size:10px;color:var(--color-text-secondary);text-align:center}
+.pstep-line{flex:1;height:1px;background:var(--color-border-tertiary);margin-bottom:18px}
+.pstep-line.done{background:#7F77DD}
+.notif-dot{width:7px;height:7px;border-radius:50%;background:#E24B4A;position:absolute;top:8px;right:8px}
+</style>
+
+<div class="app" id="app">
+<div class="topbar">
+  <div class="tb-logo">VULP <span>Roda da Venda 2.0</span></div>
+  <nav class="tb-nav" id="topnav"></nav>
+  <div class="profile-sw">
+    <span>Perfil:</span>
+    <button class="pill on" onclick="setProfile('seller')">Vendedor</button>
+    <button class="pill" onclick="setProfile('leader')">Líder</button>
+    <button class="pill" onclick="setProfile('director')">Diretor</button>
+    <button class="pill" onclick="setProfile('admin')">Admin</button>
+  </div>
+</div>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="content" id="content"></main>
+</div>
+</div>
+
+<script>
+const profiles = {
+  seller: {
+    nav: [
+      {id:'s-dash', label:'Dashboard', icon:'⬜'},
+      {id:'s-indicators', label:'Meus Indicadores', icon:'◧'},
+      {id:'s-selfeval', label:'Autoavaliação', icon:'◎'},
+      {id:'s-wheel', label:'Minha Roda', icon:'◉'},
+      {id:'s-tasks', label:'Tarefas', icon:'☑'},
+      {id:'s-feedback', label:'Feedbacks', icon:'◷'},
+    ],
+    default: 's-dash'
+  },
+  leader: {
+    nav: [
+      {id:'l-dash', label:'Dashboard', icon:'⬜'},
+      {id:'l-team', label:'Minha Equipe', icon:'◧'},
+      {id:'l-evalleader', label:'Avaliar Liderado', icon:'◎'},
+      {id:'l-pdi', label:'Plano de Ação', icon:'◉'},
+      {id:'l-tasks', label:'Tarefas do Time', icon:'☑'},
+      {id:'l-ranking', label:'Ranking', icon:'▲'},
+    ],
+    default: 'l-dash'
+  },
+  director: {
+    nav: [
+      {id:'d-dash', label:'Visão Geral', icon:'⬜'},
+      {id:'d-ranking', label:'Ranking Geral', icon:'▲'},
+      {id:'d-decision', label:'Decisões', icon:'◎'},
+      {id:'d-reports', label:'Relatórios', icon:'◧'},
+    ],
+    default: 'd-dash'
+  },
+  admin: {
+    nav: [
+      {id:'a-company', label:'Empresa', icon:'⬜'},
+      {id:'a-users', label:'Usuários', icon:'◧'},
+      {id:'a-cycles', label:'Ciclos', icon:'◎'},
+      {id:'a-areas', label:'Áreas da Roda', icon:'◉'},
+    ],
+    default: 'a-company'
+  }
+};
+
+const pages = {};
+
+// ─── SELLER ──────────────────────────────────────────────────
+pages['s-dash'] = () => `
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+  <div>
+    <div style="font-size:16px;font-weight:500">Olá, Carlos</div>
+    <div style="font-size:12px;color:var(--color-text-secondary)">Ciclo Abril 2026 · Em andamento</div>
+  </div>
+  <span class="badge b-train">● Em desenvolvimento</span>
+</div>
+<div class="grid4" style="margin-bottom:16px">
+  <div class="metric"><div class="lbl">Score atual</div><div class="val" style="color:#7F77DD">7.4</div><div class="sub">↑ +0.8 vs ciclo anterior</div></div>
+  <div class="metric"><div class="lbl">Tarefas pendentes</div><div class="val">3</div><div class="sub">1 em atraso</div></div>
+  <div class="metric"><div class="lbl">Avaliação</div><div class="val">Aberta</div><div class="sub">Prazo: 30 Abr</div></div>
+  <div class="metric"><div class="lbl">Posição no ranking</div><div class="val">3°</div><div class="sub">de 8 vendedores</div></div>
+</div>
+<div class="grid2" style="margin-bottom:12px">
+  <div class="card">
+    <div class="sec-title">Próximas ações</div>
+    <div class="tag-step done" style="margin-bottom:6px"><span>✓</span> Indicadores reais preenchidos</div>
+    <div class="tag-step active-s" style="margin-bottom:6px" onclick="goPage('s-selfeval')"><span>→</span> Autoavaliação pendente — iniciar</div>
+    <div class="tag-step" style="margin-bottom:6px"><span>◌</span> Aguardar avaliação do líder</div>
+    <div class="tag-step"><span>◌</span> Ver resultado e PDI</div>
+  </div>
+  <div class="card">
+    <div class="sec-title">Minha Roda — ciclo atual</div>
+    ${radarSVG([7,5,8,4,3,6,7,5,8,4], 130)}
+  </div>
+</div>
+<div class="card">
+  <div class="sec-title">Tarefas recentes</div>
+  ${taskRow('Estudar script de fechamento','Conversão','Hoje','atrasada','dismiss')}
+  ${taskRow('Simulação de venda 3x/semana','Conversão','Amanhã','pendente','train')}
+  ${taskRow('Registrar 10 atendimentos no sistema','Exec. Processos','28 Abr','andamento','purple')}
+</div>`;
+
+pages['s-indicators'] = () => `
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+  <div><div style="font-size:16px;font-weight:500">Indicadores reais</div><div style="font-size:12px;color:var(--color-text-secondary)">Ciclo Abril 2026 · Preencha antes de iniciar a autoavaliação</div></div>
+  <span class="badge b-train">Não enviado</span>
+</div>
+<div style="background:#FAEEDA;border:0.5px solid #FAC775;border-radius:var(--border-radius-md);padding:10px 14px;font-size:12px;color:#633806;margin-bottom:16px">⚠ Sem estes dados preenchidos, a autoavaliação não pode ser finalizada.</div>
+<div class="grid2" style="margin-bottom:12px">
+  <div class="card">
+    <div class="sec-title">Performance</div>
+    ${inputField('Faturamento total (R$)','Ex: 48.500,00')}
+    ${inputField('Nº de atendimentos','Ex: 87')}
+    ${inputField('Nº de vendas','Ex: 31')}
+    <div style="margin-bottom:10px"><label class="form-label">Taxa de conversão (%)</label><div style="padding:7px 10px;border-radius:var(--border-radius-md);background:var(--color-background-secondary);font-size:13px;color:var(--color-text-secondary)">Calculado automaticamente: vendas ÷ atendimentos</div></div>
+    ${inputField('Ticket médio (R$)','Calculado: faturamento ÷ vendas')}
+    ${inputField('Peças por atendimento','Ex: 2.3')}
+  </div>
+  <div class="card">
+    <div class="sec-title">Processo</div>
+    ${inputField('Nº de clientes abordados','Ex: 120')}
+    <div style="margin-bottom:10px"><label class="form-label">Taxa de abordagem (%)</label><div style="padding:7px 10px;border-radius:var(--border-radius-md);background:var(--color-background-secondary);font-size:13px;color:var(--color-text-secondary)">Calculado: abordados ÷ atendimentos</div></div>
+    ${inputField('Nº de follow-ups realizados','Ex: 18')}
+    ${inputField('Nº de clientes que retornaram','Ex: 7')}
+    <div style="margin-top:16px;padding-top:16px;border-top:0.5px solid var(--color-border-tertiary)">
+      <div class="sec-title" style="margin-bottom:6px">Resultado calculado</div>
+      <div class="grid2" style="gap:8px">
+        <div class="metric"><div class="lbl">Conversão</div><div class="val" style="font-size:18px">35.6%</div></div>
+        <div class="metric"><div class="lbl">Ticket médio</div><div class="val" style="font-size:18px">R$ 1.565</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div style="display:flex;gap:8px">
+  <button class="btn-ghost">Salvar rascunho</button>
+  <button class="btn-primary" onclick="goPage('s-selfeval')">Salvar e iniciar autoavaliação →</button>
+</div>`;
+
+pages['s-selfeval'] = () => `
+<div style="font-size:16px;font-weight:500;margin-bottom:4px">Autoavaliação</div>
+<div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:16px">Ciclo Abril 2026 · Avalie cada área com honestidade — você não verá a nota do líder antes de enviar</div>
+<div class="progress-steps">
+  ${[['Indicadores','done'],['Autoavaliação','curr'],['Aguardar líder',''],['Resultado','']].map((s,i,a) =>
+    `<div class="pstep"><div class="pstep-circle ${s[1]}">${s[1]==='done'?'✓':i+1}</div><div class="pstep-label">${s[0]}</div></div>${i<a.length-1?`<div class="pstep-line ${s[1]==='done'?'done':''}"></div>`:''}`
+  ).join('')}
+</div>
+<div class="card" style="margin-bottom:12px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <div><div style="font-size:13px;font-weight:500">Área 3 de 10 — Abordagem</div><div style="font-size:11px;color:var(--color-text-secondary);margin-top:2px">Quantidade e qualidade das abordagens ao cliente</div></div>
+    <span class="badge b-purple">Peso 3</span>
+  </div>
+  <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:8px">Iniciante (0–3): Não aborda clientes ativamente. Espera ser chamado.</div>
+  <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:14px">Expert (8–10): Aborda todos os clientes com método, registra e analisa a taxa.</div>
+  <div style="margin-bottom:14px">
+    <div class="form-label" style="margin-bottom:8px">Sua nota (clique para selecionar)</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      ${[0,1,2,3,4,5,6,7,8,9,10].map(n=>`<div class="score-box${n===7?' sel':''}" onclick="selectScore(this)">${n}</div>`).join('')}
+    </div>
+  </div>
+  <div>
+    <label class="form-label">Justificativa (opcional)</label>
+    <textarea class="input-field" rows="2" placeholder="Por que escolheu essa nota? O que está fazendo bem ou pode melhorar?"></textarea>
+  </div>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:center">
+  <button class="btn-ghost">← Área anterior</button>
+  <div style="font-size:11px;color:var(--color-text-secondary)">Rascunho salvo automaticamente</div>
+  <button class="btn-primary">Próxima área →</button>
+</div>`;
+
+pages['s-wheel'] = () => `
+<div style="font-size:16px;font-weight:500;margin-bottom:4px">Minha Roda da Venda</div>
+<div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:16px">Comparativo: autoavaliação × avaliação do líder · Ciclo Abril 2026</div>
+<div class="grid2" style="margin-bottom:12px">
+  <div class="card" style="display:flex;flex-direction:column;align-items:center">
+    <div class="sec-title" style="width:100%">Roda — sobreposição</div>
+    <div style="display:flex;gap:12px;margin-bottom:8px">
+      <span style="font-size:11px;color:var(--color-text-secondary)">◆ Autoavaliação</span>
+      <span style="font-size:11px;color:var(--color-text-secondary)">◇ Líder</span>
+    </div>
+    ${radarSVG([7,5,8,4,3,6,7,5,8,4], 170, [8,7,9,6,5,7,8,7,9,6])}
+    <div style="margin-top:8px;text-align:center">
+      <div style="font-size:24px;font-weight:500;color:#7F77DD">7.4</div>
+      <div style="font-size:11px;color:var(--color-text-secondary)">Score final ponderado</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="sec-title">Por área</div>
+    ${areaRows([
+      {name:'Conversão',self:7,leader:8,weight:3},
+      {name:'Ticket/Upsell',self:5,leader:7,weight:2},
+      {name:'Abordagem',self:8,leader:9,weight:3},
+      {name:'Volume Atend.',self:4,leader:6,weight:2},
+      {name:'Follow-up',self:3,leader:5,weight:2},
+      {name:'Conhec. Produto',self:6,leader:7,weight:2},
+      {name:'Comunicação',self:7,leader:8,weight:2},
+      {name:'Exec. Processos',self:5,leader:7,weight:2},
+      {name:'Disciplina',self:8,leader:9,weight:2},
+      {name:'Prontidão Lider.',self:4,leader:6,weight:1},
+    ])}
+  </div>
+</div>
+<div class="card">
+  <div class="grid2">
+    <div>
+      <div class="sec-title">Gap de percepção</div>
+      <div class="row"><span style="flex:1;font-size:12px">Gap médio geral</span><span class="gap-indicator gap-warn">1.7 pts</span></div>
+      <div class="row"><span style="flex:1;font-size:12px">Maior gap — Follow-up</span><span class="gap-indicator gap-bad">2.0 pts</span></div>
+      <div class="row"><span style="flex:1;font-size:12px">Menor gap — Disciplina</span><span class="gap-indicator gap-ok">1.0 pt</span></div>
+    </div>
+    <div>
+      <div class="sec-title">Área prioritária do PDI</div>
+      <div style="padding:12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border-left:3px solid #E24B4A">
+        <div style="font-size:13px;font-weight:500;margin-bottom:4px">Follow-up e Retorno</div>
+        <div style="font-size:11px;color:var(--color-text-secondary)">Nota: 4.0 · Peso 2 · Recorrente há 2 ciclos</div>
+        <div style="margin-top:8px"><span class="badge b-dismiss">Crítico</span></div>
+      </div>
+    </div>
+  </div>
+</div>`;
+
+pages['s-tasks'] = () => `
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+  <div><div style="font-size:16px;font-weight:500">Minhas tarefas</div><div style="font-size:12px;color:var(--color-text-secondary)">PDI Ciclo Abril · Foco: Follow-up e Retorno</div></div>
+  <div style="display:flex;gap:6px">
+    <span class="badge b-dismiss">1 em atraso</span>
+    <span class="badge b-train">2 pendentes</span>
+  </div>
+</div>
+${taskCard('Estudar script de fechamento','Conversão','Alta','Em atraso','Estudar e memorizar as 3 etapas do script de fechamento. Praticar diariamente por 15 minutos.','30 Abr 2026','Texto escrito + simulação com líder','dismiss',true)}
+${taskCard('Simulação de venda 3x/semana','Conversão','Alta','Pendente','Realizar simulações de atendimento completo com colega, incluindo objeções e fechamento.','10 Mai 2026','Registro no sistema após cada simulação','train',false)}`;
+
+pages['s-feedback'] = () => `
+<div style="font-size:16px;font-weight:500;margin-bottom:16px">Feedbacks do líder</div>
+${feedbackCard('Marcos L.','12 Abr 2026','Carlos, sua abordagem evoluiu bastante neste ciclo. O ponto de atenção segue sendo o registro de clientes — ainda perde contatos que poderiam virar venda. Foco no follow-up.','train')}
+${feedbackCard('Marcos L.','15 Mar 2026','Bom ciclo em Conversão. Manter ritmo. Produto ainda é ponto fraco — estude os lançamentos da semana.','promote')}`;
+
+// ─── LEADER ──────────────────────────────────────────────────
+pages['l-dash'] = () => `
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+  <div><div style="font-size:16px;font-weight:500">Dashboard — Líder</div><div style="font-size:12px;color:var(--color-text-secondary)">Marcos Lima · Ciclo Abril 2026</div></div>
+  <button class="btn-primary" onclick="goPage('l-evalleader')">Iniciar avaliação</button>
+</div>
+<div class="grid4" style="margin-bottom:16px">
+  <div class="metric"><div class="lbl">Vendedores</div><div class="val">8</div><div class="sub">todos ativos</div></div>
+  <div class="metric"><div class="lbl">Média do time</div><div class="val" style="color:#7F77DD">6.8</div><div class="sub">↑ +0.4 vs ciclo ant.</div></div>
+  <div class="metric"><div class="lbl">Avaliações pendentes</div><div class="val" style="color:#E24B4A">3</div><div class="sub">prazo: 30 Abr</div></div>
+  <div class="metric"><div class="lbl">Tarefas em atraso</div><div class="val" style="color:#EF9F27">5</div><div class="sub">2 vendedores</div></div>
+</div>
+<div class="card" style="margin-bottom:12px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <div class="sec-title" style="margin:0">Equipe — por score</div>
+    <div style="display:flex;gap:6px;font-size:11px;color:var(--color-text-secondary)">
+      <span class="badge b-promote">Promover</span>
+      <span class="badge b-train">Treinar</span>
+      <span class="badge b-critical">Plano Crítico</span>
+    </div>
+  </div>
+  ${teamRow('Carlos M.','7.4','train','Avaliação enviada',true)}
+  ${teamRow('Fernanda R.','8.2','promote','Avaliação enviada',true)}
+  ${teamRow('Lucas T.','6.1','train','Autoav. pendente',false)}
+  ${teamRow('Mariana S.','4.8','critical','Autoav. pendente',false)}
+  ${teamRow('João P.','5.3','train','Avaliação enviada',true)}
+</div>
+<div class="grid2">
+  <div class="card">
+    <div class="sec-title">Alertas</div>
+    ${alertRow('Mariana S. — score abaixo de 5 por 2 ciclos','dismiss')}
+    ${alertRow('Lucas T. — autoavaliação pendente (prazo: hoje)','train')}
+    ${alertRow('Carlos M. — tarefa em atraso há 3 dias','train')}
+  </div>
+  <div class="card">
+    <div class="sec-title">Áreas mais fracas do time</div>
+    ${weakArea('Follow-up e Retorno',3.9,'dismiss')}
+    ${weakArea('Volume de Atendimento',5.1,'train')}
+    ${weakArea('Conhec. de Produto',5.4,'train')}
+  </div>
+</div>`;
+
+pages['l-team'] = () => `
+<div style="font-size:16px;font-weight:500;margin-bottom:16px">Minha equipe</div>
+<div class="card">
+  ${['Carlos M.','Fernanda R.','Lucas T.','Mariana S.','João P.','Ana K.','Bruno F.','Carla V.'].map((n,i)=>{
+    const scores = [7.4,8.2,6.1,4.8,5.3,7.1,6.8,7.9];
+    const badges = ['train','promote','train','critical','train','train','train','promote'];
+    const status = ['Avaliação enviada','Avaliação enviada','Autoav. pendente','Autoav. pendente','Avaliação enviada','Avaliação enviada','Avaliação enviada','Avaliação enviada'];
+    return `<div class="row" style="gap:10px;padding:10px 0">
+      <div class="avatar">${n.split(' ').map(x=>x[0]).join('')}</div>
+      <div style="flex:1"><div style="font-size:13px;font-weight:500">${n}</div><div style="font-size:11px;color:var(--color-text-secondary)">${status[i]}</div></div>
+      <div class="bar-wrap" style="max-width:100px"><div class="bar-fill" style="width:${scores[i]*10}%;background:${badges[i]==='promote'?'#639922':badges[i]==='critical'?'#D85A30':'#7F77DD'}"></div></div>
+      <div style="font-size:14px;font-weight:500;color:${badges[i]==='promote'?'#3B6D11':badges[i]==='critical'?'#993C1D':'#534AB7'};min-width:28px;text-align:right">${scores[i]}</div>
+      <span class="badge b-${badges[i]}">${badges[i]==='promote'?'Promover':badges[i]==='critical'?'Plano Crítico':'Treinar'}</span>
+      <button class="btn-ghost" style="font-size:11px;padding:4px 10px" onclick="goPage('l-evalleader')">Avaliar</button>
+    </div>`;
+  }).join('')}
+</div>`;
+
+pages['l-evalleader'] = () => `
+<div style="font-size:16px;font-weight:500;margin-bottom:4px">Avaliar liderado</div>
+<div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:16px">Carlos M. · Ciclo Abril 2026 · Avaliação do líder</div>
+<div class="card" style="margin-bottom:12px">
+  <div style="display:flex;gap:16px;align-items:flex-start">
+    <div class="avatar" style="width:40px;height:40px;font-size:14px">CM</div>
+    <div style="flex:1">
+      <div style="font-size:13px;font-weight:500">Carlos M.</div>
+      <div style="font-size:11px;color:var(--color-text-secondary);margin-top:2px">Autoavaliação enviada em 10 Abr · Indicadores: Conversão 35.6% · Ticket R$1.565 · Follow-ups: 18</div>
+    </div>
+    <span class="badge b-train">Treinar</span>
+  </div>
+</div>
+<div class="card" style="margin-bottom:12px">
+  <div style="font-size:13px;font-weight:500;margin-bottom:12px">Área 5 de 10 — Follow-up e Retorno <span class="badge b-gray" style="margin-left:6px">Peso 2</span></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+    <div style="padding:10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md)">
+      <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:4px">Nota do vendedor</div>
+      <div style="font-size:22px;font-weight:500;color:#7F77DD">3</div>
+      <div style="font-size:11px;color:var(--color-text-secondary);margin-top:4px;font-style:italic">"Tenho dificuldade em registrar todos os contatos no sistema."</div>
+    </div>
+    <div style="padding:10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md)">
+      <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:4px">Indicadores reais</div>
+      <div style="font-size:12px;margin-bottom:2px">Follow-ups: <strong>18</strong></div>
+      <div style="font-size:12px;margin-bottom:2px">Retornos: <strong>7</strong></div>
+      <div style="font-size:12px">Taxa retorno: <strong style="color:#E24B4A">38.9%</strong> <span style="font-size:10px;color:var(--color-text-secondary)">(limite: 20% → nota máx. 5)</span></div>
+    </div>
+  </div>
+  <div style="margin-bottom:12px">
+    <div class="form-label" style="margin-bottom:8px">Sua avaliação</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+      ${[0,1,2,3,4,5,6,7,8,9,10].map(n=>`<div class="score-box${n===4?' sel':''}" onclick="selectScore(this)">${n}</div>`).join('')}
+    </div>
+    <div style="padding:8px 10px;background:#FAEEDA;border-radius:var(--border-radius-md);font-size:11px;color:#633806">Fator Realidade ativo: nota máxima permitida = 5 (taxa de retorno abaixo do limiar)</div>
+  </div>
+  <div><label class="form-label">Comentário do líder (opcional)</label>
+  <textarea class="input-field" rows="2" placeholder="O que observou no ciclo? O que deve melhorar?"></textarea></div>
+</div>
+<div style="display:flex;justify-content:space-between">
+  <button class="btn-ghost">← Área anterior</button>
+  <button class="btn-primary">Próxima área →</button>
+</div>`;
+
+pages['l-pdi'] = () => `
+<div style="font-size:16px;font-weight:500;margin-bottom:16px">Plano de ação — PDI</div>
+<div class="card" style="margin-bottom:12px">
+  <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px">
+    <div class="avatar">CM</div>
+    <div style="flex:1"><div style="font-size:13px;font-weight:500">Carlos M. · Ciclo Abril 2026</div><div style="font-size:11px;color:var(--color-text-secondary)">Score: 7.4 · Área prioritária: Follow-up e Retorno</div></div>
+    <span class="badge b-train">Em desenvolvimento</span>
+  </div>
+  <div style="padding:10px 14px;background:#EAF3DE;border-radius:var(--border-radius-md);border-left:3px solid #639922;margin-bottom:12px;font-size:12px;color:#27500A">
+    ✓ Sugestão automática gerada com base na área mais baixa. Edite ou adicione tarefas abaixo.
+  </div>
+  <div class="sec-title">Tarefas do ciclo</div>
+  ${pdiTask('Estudar script de fechamento','Conversão','Alta','Em atraso','30 Abr')}
+  ${pdiTask('Simulação de venda 3x/semana','Conversão','Alta','Pendente','10 Mai')}
+  ${pdiTask('Registrar todos os follow-ups no CRM','Follow-up','Média','Pendente','15 Mai')}
+</div>
+<button class="btn-ghost" style="margin-bottom:12px">+ Adicionar tarefa manualmente</button>`;
+
+pages['l-tasks'] = () => `
+<div style="font-size:16px;font-weight:500;margin-bottom:16px">Tarefas do time</div>
+<div class="grid4" style="margin-bottom:16px">
+  <div class="metric"><div class="lbl">Total abertas</div><div class="val">14</div></div>
+  <div class="metric"><div class="lbl">Em atraso</div><div class="val" style="color:#E24B4A">5</div></div>
+  <div class="metric"><div class="lbl">Entregues</div><div class="val" style="color:#639922">7</div></div>
+  <div class="metric"><div class="lbl">Aguardando aprovação</div><div class="val" style="color:#EF9F27">3</div></div>
+</div>
+<div class="card">
+  ${leaderTaskRow('Carlos M.','Estudar script de fechamento','Em atraso','dismiss')}
+  ${leaderTaskRow('Mariana S.','Checklist diário de processos','Entregue','blue')}
+  ${leaderTaskRow('Lucas T.','Abordagens mínimas diárias','Pendente','gray')}
+  ${leaderTaskRow('Fernanda R.','Apresentação produto semana','Aguardando aprovação','train')}
+  ${leaderTaskRow('João P.','Simulação de fechamento','Pendente','gray')}
+</div>`;
+
+pages['l-ranking'] = () => `
+<div style="font-size:16px;font-weight:500;margin-bottom:16px">Ranking do time</div>
+<div class="card">
+  <div style="display:flex;gap:8px;margin-bottom:16px">
+    <button class="pill on">Score final</button>
+    <button class="pill">Evolução</button>
+    <button class="pill">Conversão</button>
+  </div>
+  ${rankingRow(1,'Fernanda R.',8.2,'promote','+0.5')}
+  ${rankingRow(2,'Carlos M.',7.4,'train','+0.8')}
+  ${rankingRow(3,'Ana K.',7.1,'train','-0.2')}
+  ${rankingRow(4,'Carla V.',6.9,'train','+0.1')}  
+  ${rankingRow(5,'Bruno F.',6.1,'train','-0.4')}
+  ${rankingRow(6,'Lucas T.',5.8,'train','+0.3')}
+  ${rankingRow(7,'João P.',5.3,'train','+0.6')}
+  ${rankingRow(8,'Mariana S.',4.8,'critical','-0.3')}
+</div>`;
+
+// ─── DIRECTOR ────────────────────────────────────────────────
+pages['d-dash'] = () => `
+<div style="font-size:16px;font-weight:500;margin-bottom:16px">Visão geral — Empresa</div>
+<div class="grid4" style="margin-bottom:16px">
+  <div class="metric"><div class="lbl">Total vendedores</div><div class="val">32</div><div class="sub">4 equipes</div></div>
+  <div class="metric"><div class="lbl">Média geral</div><div class="val" style="color:#7F77DD">6.5</div><div class="sub">↑ +0.3</div></div>
+  <div class="metric"><div class="lbl">Plano crítico</div><div class="val" style="color:#E24B4A">4</div><div class="sub">2 lojas</div></div>
+  <div class="metric"><div class="lbl">Candidatos promoção</div><div class="val" style="color:#639922">3</div><div class="sub">este ciclo</div></div>
+</div>
+<div class="grid2" style="margin-bottom:12px">
+  <div class="card">
+    <div class="sec-title">Ranking por equipe</div>
+    ${teamRankRow('Equipe Marcos L.','7.2',1)}
+    ${teamRankRow('Equipe Carla V.','6.8',2)}
+    ${teamRankRow('Equipe Pedro A.','6.3',3)}
+    ${teamRankRow('Equipe Rosa M.','5.9',4)}
+  </div>
+  <div class="card">
+    <div class="sec-title">Áreas mais fracas — empresa</div>
+    ${weakArea('Follow-up e Retorno',4.2,'dismiss')}
+    ${weakArea('Volume de Atendimento',5.0,'critical')}
+    ${weakArea('Conversão',5.3,'train')}
+    ${weakArea('Conhec. Produto',5.6,'train')}
+  </div>
+</div>
+<div class="card">
+  <div class="sec-title">Decisões pendentes</div>
+  <div class="row"><div class="avatar" style="background:#FCEBEB;color:#A32D2D">MS</div><div style="flex:1;margin-left:8px"><div style="font-size:12px;font-weight:500">Mariana S.</div><div style="font-size:11px;color:var(--color-text-secondary)">Proposta de plano crítico — aguardando confirmação do diretor</div></div><button class="btn-primary" style="font-size:11px;padding:4px 12px" onclick="goPage('d-decision')">Ver →</button></div>
+  <div class="row"><div class="avatar" style="background:#EAF3DE;color:#27500A">FR</div><div style="flex:1;margin-left:8px"><div style="font-size:12px;font-weight:500">Fernanda R.</div><div style="font-size:11px;color:var(--color-text-secondary)">Candidata à promoção — 3 ciclos consecutivos acima de 8</div></div><button class="btn-primary" style="font-size:11px;padding:4px 12px" onclick="goPage('d-decision')">Ver →</button></div>
+</div>`;
+
+pages['d-ranking'] = () => `
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+  <div style="font-size:16px;font-weight:500">Ranking geral</div>
+  <div style="display:flex;gap:6px">
+    <button class="pill on">Empresa</button>
+    <button class="pill">Por loja</button>
+    <button class="pill">Por líder</button>
+  </div>
+</div>
+<div class="card">
+  <div style="display:grid;grid-template-columns:32px 150px 1fr 60px 120px 90px;gap:8px;padding:0 0 8px;border-bottom:0.5px solid var(--color-border-tertiary);font-size:11px;color:var(--color-text-secondary);font-weight:500">
+    <span>#</span><span>Nome</span><span>Score</span><span></span><span>Status</span><span>Evolução</span>
+  </div>
+  ${[['Fernanda R.','promote',8.2,'+0.5'],['Carlos M.','train',7.4,'+0.8'],['Ana K.','train',7.1,'-0.2'],['Carla V.','train',6.9,'+0.1'],['Bruno F.','train',6.1,'-0.4'],['Lucas T.','train',5.8,'+0.3'],['João P.','train',5.3,'+0.6'],['Mariana S.','critical',4.8,'-0.3']].map((r,i)=>`
+  <div style="display:grid;grid-template-columns:32px 150px 1fr 60px 120px 90px;gap:8px;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary);align-items:center">
+    <span style="font-size:13px;font-weight:500;color:${i<3?'#534AB7':'var(--color-text-secondary)'}">${i+1}°</span>
+    <div style="display:flex;align-items:center;gap:6px"><div class="avatar" style="width:22px;height:22px;font-size:9px">${r[0].split(' ').map(x=>x[0]).join('')}</div><span style="font-size:12px">${r[0]}</span></div>
+    <div class="bar-wrap"><div class="bar-fill" style="width:${r[2]*10}%;background:${r[1]==='promote'?'#639922':r[1]==='critical'?'#D85A30':'#7F77DD'}"></div></div>
+    <span style="font-size:14px;font-weight:500;color:${r[1]==='promote'?'#3B6D11':r[1]==='critical'?'#993C1D':'#534AB7'}">${r[2]}</span>
+    <span class="badge b-${r[1]}">${r[1]==='promote'?'Promover':r[1]==='critical'?'Plano crítico':'Treinar'}</span>
+    <span style="font-size:12px;color:${r[3].startsWith('+')?'#3B6D11':'#993C1D'}">${r[3]}</span>
+  </div>`).join('')}
+</div>`;
+
+pages['d-decision'] = () => `
+<div style="font-size:16px;font-weight:500;margin-bottom:16px">Decisões — confirmação do diretor</div>
+<div style="background:#FAECE7;border:0.5px solid #F5C4B3;border-radius:var(--border-radius-md);padding:10px 14px;font-size:12px;color:#993C1D;margin-bottom:16px">
+  2 decisões aguardando sua confirmação. Decisões de plano crítico e promoção requerem dupla confirmação: líder + diretor.
+</div>
+<div class="card" style="margin-bottom:12px;border-left:3px solid #E24B4A">
+  <div style="display:flex;gap:10px;align-items:flex-start">
+    <div class="avatar" style="background:#FCEBEB;color:#A32D2D">MS</div>
+    <div style="flex:1">
+      <div style="font-size:13px;font-weight:500;margin-bottom:2px">Mariana S. — Revisão para desligamento</div>
+      <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:8px">Proposto por: Marcos Lima · 15 Abr 2026</div>
+      <div style="font-size:12px;margin-bottom:8px"><strong>Motivo (líder):</strong> Score abaixo de 5 por 3 ciclos consecutivos. PDI do ciclo anterior não foi cumprido. Falta de evolução mesmo após treinamento intensivo em Follow-up. Sem melhora de indicadores reais.</div>
+      <div class="grid3" style="gap:8px;margin-bottom:12px">
+        <div class="metric" style="padding:8px"><div class="lbl">Score atual</div><div class="val" style="font-size:16px;color:#E24B4A">4.8</div></div>
+        <div class="metric" style="padding:8px"><div class="lbl">Ciclos abaixo de 5</div><div class="val" style="font-size:16px">3</div></div>
+        <div class="metric" style="padding:8px"><div class="lbl">PDI cumprido</div><div class="val" style="font-size:16px;color:#E24B4A">0%</div></div>
+      </div>
+      <div style="margin-bottom:12px"><label class="form-label">Justificativa do diretor (obrigatório — mínimo 100 caracteres)</label>
+      <textarea class="input-field" rows="2" placeholder="Descreva sua análise desta decisão antes de confirmar ou rejeitar..."></textarea></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-ghost">Rejeitar proposta</button>
+        <button class="btn-danger">Confirmar revisão para desligamento</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card" style="border-left:3px solid #639922">
+  <div style="display:flex;gap:10px;align-items:flex-start">
+    <div class="avatar" style="background:#EAF3DE;color:#27500A">FR</div>
+    <div style="flex:1">
+      <div style="font-size:13px;font-weight:500;margin-bottom:2px">Fernanda R. — Candidata à promoção</div>
+      <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:8px">Gerado automaticamente pelo sistema · 16 Abr 2026</div>
+      <div class="grid4" style="gap:8px;margin-bottom:12px">
+        <div class="metric" style="padding:8px"><div class="lbl">Score</div><div class="val" style="font-size:16px;color:#639922">8.2</div></div>
+        <div class="metric" style="padding:8px"><div class="lbl">Ciclos acima de 8</div><div class="val" style="font-size:16px">3</div></div>
+        <div class="metric" style="padding:8px"><div class="lbl">Prontidão Lider.</div><div class="val" style="font-size:16px">7.5</div></div>
+        <div class="metric" style="padding:8px"><div class="lbl">Gap percepção</div><div class="val" style="font-size:16px">0.8</div></div>
+      </div>
+      <div style="display:flex;gap:8px"><button class="btn-ghost">Adiar decisão</button><button class="btn-primary">Confirmar promoção</button></div>
+    </div>
+  </div>
+</div>`;
+
+pages['d-reports'] = () => `
+<div style="font-size:16px;font-weight:500;margin-bottom:16px">Relatórios</div>
+<div class="grid2" style="margin-bottom:12px">
+  ${reportCard('Relatório individual','Histórico completo de um vendedor: scores, roda, PDI e decisões','Vendedor + Ciclo','PDF / Excel')}
+  ${reportCard('Relatório da equipe','Comparativo de todos os vendedores de um líder por ciclo','Líder + Ciclo','PDF / Excel')}
+  ${reportCard('Relatório da empresa','Visão consolidada de todas as equipes e indicadores','Ciclo + Período','PDF / Excel')}
+  ${reportCard('Matriz de decisões','Histórico de promoções, treinamentos e desligamentos','Período','Excel')}
+</div>
+<div style="font-size:12px;color:var(--color-text-secondary);padding:10px 0">Exportação de dados sensíveis requer perfil de Diretor ou Administrador. Toda exportação é registrada em audit log.</div>`;
+
+// ─── ADMIN ────────────────────────────────────────────────────
+pages['a-company'] = () => `
+<div style="font-size:16px;font-weight:500;margin-bottom:16px">Empresa e lojas</div>
+<div class="card" style="margin-bottom:12px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <div class="sec-title" style="margin:0">VULP Business — Santarém PA</div>
+    <button class="btn-ghost" style="font-size:11px;padding:4px 10px">Editar</button>
+  </div>
+  <div class="grid3">
+    <div class="metric"><div class="lbl">Lojas ativas</div><div class="val">3</div></div>
+    <div class="metric"><div class="lbl">Usuários</div><div class="val">34</div></div>
+    <div class="metric"><div class="lbl">Ciclo atual</div><div class="val" style="font-size:16px">Abr 2026</div></div>
+  </div>
+</div>
+<div class="card">
+  <div style="display:flex;justify-content:space-between;margin-bottom:12px"><div class="sec-title" style="margin:0">Lojas</div><button class="btn-primary" style="font-size:11px;padding:4px 10px">+ Adicionar</button></div>
+  ${storeRow('Loja Centro','Santarém','12 vendedores')}
+  ${storeRow('Loja Shopping','Santarém','10 vendedores')}
+  ${storeRow('Loja Norte','Santarém','9 vendedores')}
+</div>`;
+
+pages['a-users'] = () => `
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+  <div style="font-size:16px;font-weight:500">Usuários</div>
+  <button class="btn-primary">+ Novo usuário</button>
+</div>
+<div class="card">
+  <div style="display:flex;gap:8px;margin-bottom:12px">
+    <button class="pill on">Todos</button>
+    <button class="pill">Vendedores</button>
+    <button class="pill">Líderes</button>
+    <button class="pill">Diretores</button>
+  </div>
+  ${adminUserRow('Carlos M.','Vendedor','Loja Centro','Ativo')}
+  ${adminUserRow('Fernanda R.','Vendedor','Loja Shopping','Ativo')}
+  ${adminUserRow('Marcos Lima','Líder','Loja Centro','Ativo')}
+  ${adminUserRow('Ana Karla','Vendedor','Loja Norte','Ativo')}
+  ${adminUserRow('Mariana S.','Vendedor','Loja Centro','Ativo')}
+  ${adminUserRow('Pedro Alves','Líder','Loja Shopping','Ativo')}
+</div>`;
+
+pages['a-cycles'] = () => `
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+  <div style="font-size:16px;font-weight:500">Ciclos de avaliação</div>
+  <button class="btn-primary">+ Novo ciclo</button>
+</div>
+<div class="card" style="margin-bottom:12px">
+  <div class="row" style="padding-bottom:10px"><div style="flex:1"><div style="font-size:13px;font-weight:500">Ciclo Abril 2026</div><div style="font-size:11px;color:var(--color-text-secondary)">01 Abr – 30 Abr 2026 · 30 dias</div></div><span class="badge b-blue">Aberto</span><button class="btn-ghost" style="font-size:11px;padding:4px 10px">Fechar ciclo</button></div>
+  <div class="row"><div style="flex:1"><div style="font-size:13px;font-weight:500">Ciclo Março 2026</div><div style="font-size:11px;color:var(--color-text-secondary)">01 Mar – 31 Mar 2026 · 30 dias</div></div><span class="badge b-gray">Fechado</span><button class="btn-ghost" style="font-size:11px;padding:4px 10px">Ver resultados</button></div>
+  <div class="row"><div style="flex:1"><div style="font-size:13px;font-weight:500">Ciclo Fevereiro 2026</div><div style="font-size:11px;color:var(--color-text-secondary)">01 Fev – 28 Fev 2026 · 28 dias</div></div><span class="badge b-gray">Fechado</span><button class="btn-ghost" style="font-size:11px;padding:4px 10px">Ver resultados</button></div>
+</div>`;
+
+pages['a-areas'] = () => `
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+  <div style="font-size:16px;font-weight:500">Áreas da Roda da Venda</div>
+  <div style="font-size:12px;color:var(--color-text-secondary)">Alterações afetam apenas ciclos futuros</div>
+</div>
+<div class="card">
+  ${[
+    ['Conversão',3,'Taxa de conversão','25%','5'],
+    ['Ticket / Upsell',2,'Ticket médio vs meta','70% meta','6'],
+    ['Abordagem',3,'Taxa de abordagem','40%','5'],
+    ['Volume Atendimento',2,'Atend. vs média equipe','60% média','5'],
+    ['Follow-up e Retorno',2,'Taxa de retorno','20%','5'],
+    ['Conhecimento do Produto',2,'—','—','—'],
+    ['Comunicação com Cliente',2,'—','—','—'],
+    ['Execução de Processos',2,'—','—','—'],
+    ['Disciplina',2,'—','—','—'],
+    ['Prontidão para Liderança',1,'—','—','—'],
+  ].map((a,i)=>`<div class="row" style="gap:10px;padding:8px 0">
+    <span style="font-size:11px;color:var(--color-text-secondary);min-width:20px">${i+1}</span>
+    <span style="flex:1;font-size:12px;font-weight:500">${a[0]}</span>
+    <span class="badge b-purple" style="min-width:32px;text-align:center">P${a[1]}</span>
+    <span style="font-size:11px;color:var(--color-text-secondary);min-width:110px">${a[2]}</span>
+    <span style="font-size:11px;color:var(--color-text-secondary);min-width:70px">${a[3]!=='—'?`Limiar: ${a[3]}`:''}</span>
+    <span style="font-size:11px;color:var(--color-text-secondary);min-width:60px">${a[4]!=='—'?`Máx: ${a[4]}`:''}</span>
+    <button class="btn-ghost" style="font-size:10px;padding:3px 8px">Editar</button>
+  </div>`).join('')}
+</div>`;
+
+// ─── HELPER FUNCTIONS ────────────────────────────────────────
+function radarSVG(scores, size, scores2) {
+  const cx=size/2, cy=size/2, r=size*0.36, n=scores.length;
+  const polar=(a,rad)=>{const rd=(a-90)*Math.PI/180;return[cx+rad*Math.cos(rd),cy+rad*Math.sin(rd)]};
+  const rings=[2,4,6,8,10].map(v=>{const rr=r*v/10;const pts=Array.from({length:n},(_,i)=>polar(i*360/n,rr).join(',')).join(' ');return `<polygon points="${pts}" fill="none" stroke="#AFA9EC" stroke-width="0.5"/>`;}).join('');
+  const spokes=Array.from({length:n},(_,i)=>{const[x,y]=polar(i*360/n,r);return`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#AFA9EC" stroke-width="0.5"/>`;}).join('');
+  const pts1=scores.map((s,i)=>polar(i*360/n,r*s/10).join(',')).join(' ');
+  const area1=`<polygon points="${pts1}" fill="#7F77DD" fill-opacity="0.25" stroke="#7F77DD" stroke-width="1.5"/>`;
+  const area2=scores2?`<polygon points="${scores2.map((s,i)=>polar(i*360/n,r*s/10).join(',')).join(' ')}" fill="#E24B4A" fill-opacity="0.15" stroke="#E24B4A" stroke-width="1" stroke-dasharray="3,2"/>`:''
+  const dots=scores.map((s,i)=>{const[x,y]=polar(i*360/n,r*s/10);return`<circle cx="${x}" cy="${y}" r="${size>150?4:3}" fill="#7F77DD" stroke="white" stroke-width="1"/>`;}).join('');
+  return `<svg class="radar-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${rings}${spokes}${area2}${area1}${dots}<circle cx="${cx}" cy="${cy}" r="3" fill="#534AB7"/></svg>`;
+}
+
+function areaRows(areas) {
+  return areas.map(a=>{
+    const avg=((a.self+a.leader)/2).toFixed(1);
+    const gap=Math.abs(a.leader-a.self);
+    const gapCls=gap<=1?'gap-ok':gap<=2?'gap-warn':'gap-bad';
+    const barColor=avg<5?'#E24B4A':avg<7?'#EF9F27':'#7F77DD';
+    return `<div class="row" style="gap:8px;padding:6px 0">
+      <span style="font-size:11px;min-width:90px">${a.name}</span>
+      <span class="badge b-gray" style="font-size:10px;min-width:24px">P${a.weight}</span>
+      <div class="bar-wrap"><div class="bar-fill" style="width:${avg*10}%;background:${barColor}"></div></div>
+      <span style="font-size:12px;font-weight:500;min-width:24px;text-align:right">${avg}</span>
+      <span class="gap-indicator ${gapCls}" style="font-size:10px;min-width:38px;text-align:center">Δ${gap}</span>
+    </div>`;
+  }).join('');
+}
+
+function taskRow(title, area, due, status, badgeCls) {
+  return `<div class="row" style="gap:8px;padding:7px 0">
+    <div style="flex:1"><div style="font-size:12px;font-weight:500">${title}</div><div style="font-size:11px;color:var(--color-text-secondary)">${area} · ${due}</div></div>
+    <span class="badge b-${badgeCls}">${status}</span>
+  </div>`;
+}
+
+function taskCard(title, area, priority, status, desc, due, delivery, cls, open) {
+  return `<div class="card" style="margin-bottom:10px;border-left:3px solid ${cls==='dismiss'?'#E24B4A':'#EF9F27'}">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+      <div><div style="font-size:13px;font-weight:500">${title}</div><div style="font-size:11px;color:var(--color-text-secondary);margin-top:2px">${area} · Prazo: ${due}</div></div>
+      <span class="badge b-${cls}">${status}</span>
+    </div>
+    <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:10px">${desc}</div>
+    <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:10px"><strong>Entregável:</strong> ${delivery}</div>
+    ${open?`<div><label class="form-label">Enviar entrega</label><textarea class="input-field" rows="2" placeholder="Descreva o que você praticou ou anexe o resultado..."></textarea><div style="display:flex;gap:8px;margin-top:8px"><button class="btn-ghost">Anexar arquivo</button><button class="btn-primary">Enviar entrega</button></div></div>`:''}
+  </div>`;
+}
+
+function feedbackCard(author, date, text, cls) {
+  return `<div class="card" style="margin-bottom:10px;border-left:3px solid ${cls==='promote'?'#639922':'#EF9F27'}">
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+      <div class="avatar">${author.split(' ').map(x=>x[0]).join('')}</div>
+      <div style="font-size:12px;font-weight:500">${author}</div>
+      <div style="font-size:11px;color:var(--color-text-secondary);margin-left:auto">${date}</div>
+    </div>
+    <div style="font-size:13px;color:var(--color-text-primary)">${text}</div>
+  </div>`;
+}
+
+function teamRow(name, score, status, evalStatus, hasEval) {
+  const statusColor={promote:'#3B6D11',train:'#854F0B',critical:'#993C1D'};
+  const scoreColor={promote:'#639922',train:'#7F77DD',critical:'#E24B4A'};
+  return `<div class="row" style="gap:10px;padding:8px 0">
+    <div class="avatar">${name.split(' ').map(x=>x[0]).join('')}</div>
+    <div style="flex:1"><div style="font-size:12px;font-weight:500">${name}</div><div style="font-size:11px;color:var(--color-text-secondary)">${evalStatus}</div></div>
+    <div class="bar-wrap" style="max-width:80px"><div class="bar-fill" style="width:${score*10}%;background:${scoreColor[status]}"></div></div>
+    <span style="font-size:14px;font-weight:500;color:${scoreColor[status]};min-width:28px">${score}</span>
+    <span class="badge b-${status}">${status==='promote'?'Promover':status==='critical'?'Plano Crítico':'Treinar'}</span>
+    ${hasEval?`<button class="btn-ghost" style="font-size:11px;padding:4px 10px" onclick="goPage('l-evalleader')">Avaliar</button>`:'<span style="font-size:11px;color:var(--color-text-secondary);min-width:60px;text-align:right">Pendente</span>'}
+  </div>`;
+}
+
+function alertRow(text, cls) {
+  return `<div class="row" style="padding:7px 0;gap:8px"><div class="dot" style="background:${cls==='dismiss'?'#E24B4A':cls==='train'?'#EF9F27':'#639922'}"></div><span style="font-size:12px;flex:1">${text}</span></div>`;
+}
+
+function weakArea(name, score, cls) {
+  const c={dismiss:'#E24B4A',critical:'#D85A30',train:'#EF9F27'}[cls]||'#7F77DD';
+  return `<div class="row" style="padding:7px 0;gap:8px"><div style="flex:1;font-size:12px">${name}</div><div class="bar-wrap" style="max-width:60px"><div class="bar-fill" style="width:${score*10}%;background:${c}"></div></div><span style="font-size:12px;font-weight:500;color:${c}">${score}</span></div>`;
+}
+
+function pdiTask(title, area, priority, status, due) {
+  const cls=status==='Em atraso'?'dismiss':status==='Pendente'?'train':'promote';
+  return `<div class="row" style="padding:8px 0;gap:10px">
+    <div style="flex:1"><div style="font-size:12px;font-weight:500">${title}</div><div style="font-size:11px;color:var(--color-text-secondary)">${area} · Prazo: ${due}</div></div>
+    <span class="badge b-gray">${priority}</span>
+    <span class="badge b-${cls}">${status}</span>
+    <button class="btn-ghost" style="font-size:11px;padding:4px 8px">Editar</button>
+  </div>`;
+}
+
+function leaderTaskRow(name, task, status, cls) {
+  return `<div class="row" style="gap:10px;padding:8px 0">
+    <div class="avatar">${name.split(' ').map(x=>x[0]).join('')}</div>
+    <div style="flex:1"><div style="font-size:12px;font-weight:500">${task}</div><div style="font-size:11px;color:var(--color-text-secondary)">${name}</div></div>
+    <span class="badge b-${cls}">${status}</span>
+    ${cls==='blue'?`<button class="btn-primary" style="font-size:11px;padding:4px 10px">Aprovar</button>`:''}
+  </div>`;
+}
+
+function rankingRow(pos, name, score, status, delta) {
+  const sc={promote:'#639922',train:'#7F77DD',critical:'#E24B4A'};
+  return `<div class="row" style="gap:10px;padding:8px 0;align-items:center">
+    <span style="font-size:14px;font-weight:500;color:${pos<=3?'#534AB7':'var(--color-text-secondary)'};min-width:24px">${pos}°</span>
+    <div class="avatar">${name.split(' ').map(x=>x[0]).join('')}</div>
+    <span style="flex:1;font-size:12px;font-weight:500">${name}</span>
+    <div class="bar-wrap" style="max-width:100px"><div class="bar-fill" style="width:${score*10}%;background:${sc[status]}"></div></div>
+    <span style="font-size:15px;font-weight:500;color:${sc[status]};min-width:30px">${score}</span>
+    <span class="badge b-${status}">${status==='promote'?'Promover':status==='critical'?'Crítico':'Treinar'}</span>
+    <span style="font-size:12px;color:${delta.startsWith('+')?'#3B6D11':'#993C1D'};min-width:36px;text-align:right">${delta}</span>
+  </div>`;
+}
+
+function teamRankRow(team, score, pos) {
+  return `<div class="row" style="padding:7px 0;gap:8px">
+    <span style="font-size:12px;font-weight:500;color:#534AB7;min-width:16px">${pos}°</span>
+    <span style="flex:1;font-size:12px">${team}</span>
+    <div class="bar-wrap" style="max-width:60px"><div class="bar-fill" style="width:${parseFloat(score)*10}%;background:#7F77DD"></div></div>
+    <span style="font-size:13px;font-weight:500;color:#534AB7">${score}</span>
+  </div>`;
+}
+
+function reportCard(title, desc, filters, exports) {
+  return `<div class="card card-sm"><div style="font-size:13px;font-weight:500;margin-bottom:6px">${title}</div><div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:10px">${desc}</div><div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:11px;color:var(--color-text-secondary)">${filters}</div><div style="display:flex;gap:6px">${exports.split(' / ').map(e=>`<button class="btn-ghost" style="font-size:11px;padding:4px 8px">${e}</button>`).join('')}</div></div></div>`;
+}
+
+function inputField(label, placeholder) {
+  return `<div style="margin-bottom:10px"><label class="form-label">${label}</label><input class="input-field" placeholder="${placeholder}" /></div>`;
+}
+
+function storeRow(name, city, count) {
+  return `<div class="row" style="padding:10px 0;gap:10px">
+    <div style="flex:1"><div style="font-size:13px;font-weight:500">${name}</div><div style="font-size:11px;color:var(--color-text-secondary)">${city} · ${count}</div></div>
+    <span class="badge b-blue">Ativa</span>
+    <button class="btn-ghost" style="font-size:11px;padding:4px 8px">Configurar</button>
+  </div>`;
+}
+
+function adminUserRow(name, role, store, status) {
+  const roleColor={Vendedor:'gray',Líder:'purple',Diretor:'blue',Admin:'blue'}[role]||'gray';
+  return `<div class="row" style="gap:10px;padding:8px 0">
+    <div class="avatar">${name.split(' ').map(x=>x[0]).join('')}</div>
+    <div style="flex:1"><div style="font-size:12px;font-weight:500">${name}</div><div style="font-size:11px;color:var(--color-text-secondary)">${store}</div></div>
+    <span class="badge b-${roleColor}">${role}</span>
+    <span class="badge b-promote">${status}</span>
+    <button class="btn-ghost" style="font-size:11px;padding:4px 8px">Editar</button>
+  </div>`;
+}
+
+// ─── NAVIGATION ENGINE ───────────────────────────────────────
+let currentProfile = 'seller';
+let currentPage = 's-dash';
+
+function goPage(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const pg = document.getElementById('page-'+id);
+  if(pg) {
+    pg.classList.add('active');
+    currentPage = id;
+    document.querySelectorAll('.sb-item').forEach(i=>{
+      i.classList.toggle('active', i.dataset.page===id);
+    });
+  }
+}
+
+function setProfile(p) {
+  currentProfile = p;
+  document.querySelectorAll('.pill').forEach(btn=>{
+    btn.classList.toggle('on', btn.getAttribute('onclick')===`setProfile('${p}')`);
+  });
+  renderSidebar();
+  renderPages();
+  goPage(profiles[p].default);
+}
+
+function selectScore(el) {
+  el.closest('.card').querySelectorAll('.score-box').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function renderSidebar() {
+  const p = profiles[currentProfile];
+  const sb = document.getElementById('sidebar');
+  sb.innerHTML = '';
+  p.nav.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'sb-item' + (item.id===p.default?' active':'');
+    el.dataset.page = item.id;
+    el.innerHTML = `<span style="font-size:14px">${item.icon}</span><span>${item.label}</span>`;
+    el.onclick = () => goPage(item.id);
+    sb.appendChild(el);
+  });
+}
+
+function renderPages() {
+  const content = document.getElementById('content');
+  content.innerHTML = '';
+  Object.entries(pages).forEach(([id, fn]) => {
+    const div = document.createElement('div');
+    div.className = 'page';
+    div.id = 'page-' + id;
+    div.innerHTML = fn();
+    content.appendChild(div);
+  });
+}
+
+renderSidebar();
+renderPages();
+goPage(profiles[currentProfile].default);
+</script>
