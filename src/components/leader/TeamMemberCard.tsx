@@ -34,7 +34,6 @@ export function TeamMemberCard({ member }: TeamMemberCardProps) {
               labels={labels} 
               scores={scores} 
               scoresCompare={leaderScores}
-              hideLabels 
             />
           </div>
 

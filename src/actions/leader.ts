@@ -56,7 +56,11 @@ export async function saveLeaderCalibration(evaluationId: string, leaderScore: n
 
   // 3. Disparar automação de PDI se necessário
   if (evalData && evalData.areas) {
-    await autoAssignPDI(evalData.seller_id, (evalData.areas as { name?: string }).name, leaderScore)
+    const areaName = Array.isArray(evalData.areas) 
+      ? (evalData.areas[0] as { name: string }).name 
+      : (evalData.areas as { name: string }).name;
+      
+    await autoAssignPDI(evalData.seller_id, areaName, leaderScore);
   }
 
   revalidatePath('/leader')

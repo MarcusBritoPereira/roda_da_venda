@@ -1,6 +1,6 @@
-import React from "react";
 import Link from "next/link";
 import { LayoutDashboard, Target, Users, Settings, LogOut, Menu } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 
 interface DashboardLayoutProps {
@@ -8,6 +8,7 @@ interface DashboardLayoutProps {
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  const pathname = usePathname();
   // Simulação de papel do usuário (em produção viria do Profile no Supabase)
   const userRole = "seller"; 
 
@@ -15,7 +16,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     { icon: <LayoutDashboard size={20} />, label: "Dashboard", href: "/dashboard", roles: ["seller", "leader", "admin"] },
     { icon: <Target size={20} />, label: "Avaliação", href: "/evaluations/new", roles: ["seller", "leader", "admin"] },
     { icon: <Users size={20} />, label: "Time (Líder)", href: "/leader", roles: ["leader", "admin"] },
-    { icon: <Settings size={20} />, label: "Sistema", href: "/admin/cycles", roles: ["admin"] },
+    { icon: <Trophy size={20} />, label: "Evolução (PDIs)", href: "/leader/pdi-tracking", roles: ["leader", "admin"] },
+    { icon: <Settings size={20} />, label: "Sistema", href: "/admin", roles: ["admin"] },
   ];
 
   const menuItems = allItems.filter(item => item.roles.includes(userRole));
@@ -32,20 +34,23 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         </div>
 
         <nav className="flex-1 px-4 py-6 space-y-2">
-          {menuItems.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                item.active
-                  ? "bg-vulp-electric/20 text-vulp-lilac border border-vulp-electric/20 shadow-glow-lilac"
-                  : "text-ui-muted hover:bg-ui-surface hover:text-vulp-white"
-              }`}
-            >
-              {item.icon}
-              <span className="font-semibold">{item.label}</span>
-            </Link>
-          ))}
+          {menuItems.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.label}
+                href={item.href}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+                  isActive
+                    ? "bg-vulp-electric/20 text-vulp-lilac border border-vulp-electric/20 shadow-glow-lilac"
+                    : "text-ui-muted hover:bg-ui-surface hover:text-vulp-white"
+                }`}
+              >
+                {item.icon}
+                <span className="font-semibold">{item.label}</span>
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="p-4 border-t border-ui-border">
