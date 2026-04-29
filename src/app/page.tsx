@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/Badge";
 import { RadarWheel } from "@/components/charts/RadarWheel";
 import { ScoreBar } from "@/components/ui/ScoreBar";
-import { User, Target, TrendingUp, CheckCircle2 } from "lucide-react";
+import { Target, TrendingUp, CheckCircle2 } from "lucide-react";
 
 export default function Home() {
   const sampleLabels = ["Conv.", "Ticket", "Abord.", "Volume", "Follow", "Prod.", "Comun.", "Exec.", "Discip.", "Lider."];

@@ -4,9 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { getCycles, createCycle } from "@/actions/admin";
+import { getCycles } from "@/actions/admin";
 import { getAreas } from "@/actions/evaluations";
-import { Settings, Plus, Play, StopCircle } from "lucide-react";
+import { Settings, Plus } from "lucide-react";
 
 export default async function AdminCyclesPage() {
   const cycles = await getCycles();

@@ -2,7 +2,6 @@
 
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
 import { CheckCircle2, Clock, PlayCircle, Trophy } from "lucide-react";
 import { updatePDIStatus } from "@/actions/pdis";
 
