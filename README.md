@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎡 Roda da Venda 2.0 | Manual de Operações
 
-## Getting Started
+Bem-vindo à documentação oficial de infraestrutura e operações da **Roda da Venda 2.0 (VULP Business)**. Este documento serve como guia para desenvolvedores e administradores de sistema.
 
-First, run the development server:
+---
 
+## 🚀 Stack Tecnológica
+
+| Camada | Tecnologia | Propósito |
+| :--- | :--- | :--- |
+| **Frontend** | [Next.js 15 (App Router)](https://nextjs.org/) | Interface de alta performance e SSR. |
+| **Estilização** | [Tailwind CSS 4](https://tailwindcss.com/) | Design System "Cyber-Industrial" customizado. |
+| **Backend** | [Next.js Server Actions](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations) | Lógica de negócio segura do lado do servidor. |
+| **Banco de Dados** | [PostgreSQL (Supabase)](https://supabase.com/) | Armazenamento relacional com RLS. |
+| **Autenticação** | [Supabase Auth](https://supabase.com/auth) | Gestão de usuários e sessões JWT. |
+
+---
+
+## 🔐 Níveis de Acesso (RBAC)
+
+O sistema utiliza um modelo de **Controle de Acesso Baseado em Papéis (RBAC)** integrado ao Row Level Security (RLS) do banco de dados.
+
+| Papel | Descrição | Escopo de Acesso |
+| :--- | :--- | :--- |
+| **Vendedor (Seller)** | Usuário final que realiza autoavaliações. | Apenas seus próprios dados e missões de PDI. |
+| **Líder (Leader)** | Gestor de equipe que calibra notas. | Dados dos vendedores vinculados ao seu `leader_id`. |
+| **Administrador (Admin)** | Gestor global da empresa. | Acesso a todas as métricas, ciclos e configurações da empresa. |
+
+> [!IMPORTANT]
+> A promoção de um usuário para **Admin** ou **Líder** deve ser feita via banco de dados ou painel administrativo, conforme detalhado em [docs/GOVERNANCA.md](file:///Users/marcuspereira/roda_da_venda/docs/GOVERNANCA.md).
+
+---
+
+## 🛠️ Guia de Início Rápido
+
+### 1. Requisitos
+- Node.js 20+
+- Instância do Supabase configurada.
+
+### 2. Configuração de Ambiente
+Crie um arquivo `.env.local` na raiz do projeto com as seguintes chaves:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+NEXT_PUBLIC_SUPABASE_URL=sua_url_do_supabase
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sua_chave_anon
+DATABASE_URL=sua_url_de_conexao_postgres
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Instalação e Execução
+```bash
+npm install
+npm run dev
+```
+Acesse: `http://localhost:3001`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📁 Estrutura de Documentação Complementar
+- [Analise de Gaps](file:///Users/marcuspereira/roda_da_venda/docs/analise_gaps_aplicacao.md)
+- [Guia de Governança e Acessos](file:///Users/marcuspereira/roda_da_venda/docs/GOVERNANCA.md)
+- [Esquema de Banco de Dados](file:///Users/marcuspereira/roda_da_venda/supabase/migrations/20260428_initial_schema.sql)
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+*Documentação mantida pela equipe de DevOps VULP.*

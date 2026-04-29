@@ -1,5 +1,7 @@
+'use client'
+
 import Link from "next/link";
-import { LayoutDashboard, Target, Users, Settings, LogOut, Menu } from "lucide-react";
+import { LayoutDashboard, Target, Users, Settings, LogOut, Menu, Trophy } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 
