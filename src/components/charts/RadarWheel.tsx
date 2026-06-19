@@ -35,7 +35,7 @@ export const RadarWheel: React.FC<RadarWheelProps> = ({
         key={v}
         points={pts}
         fill="none"
-        stroke="var(--color-ui-border)"
+        stroke="var(--chart-line)"
         strokeWidth={v === 6 ? 1.5 : 1}
       />
     );
@@ -50,7 +50,7 @@ export const RadarWheel: React.FC<RadarWheelProps> = ({
         y1={cy}
         x2={x}
         y2={y}
-        stroke="var(--color-ui-border)"
+        stroke="var(--chart-line)"
         strokeWidth={1}
       />
     );
@@ -79,11 +79,12 @@ export const RadarWheel: React.FC<RadarWheelProps> = ({
       points={scoresCompare
         .map((s, i) => polar((i * 360) / n, (r * s) / 10).join(","))
         .join(" ")}
-      fill="var(--color-status-dismiss)"
-      fillOpacity={0.1}
-      stroke="var(--color-status-dismiss)"
-      strokeWidth={1}
-      strokeDasharray="4,2"
+      fill="var(--color-vulp-brand)"
+      fillOpacity={0.05}
+      stroke="var(--color-vulp-brand)"
+      strokeWidth={2.5}
+      strokeDasharray="6,4"
+      className="transition-all duration-500 ease-out"
     />
   ) : null;
 
@@ -96,9 +97,9 @@ export const RadarWheel: React.FC<RadarWheelProps> = ({
         x={x}
         y={y + 4}
         textAnchor={anchor}
-        fill="var(--color-ui-muted)"
+        fill="var(--color-text-body)"
         fontSize={size > 200 ? 10 : 8}
-        className="font-bold uppercase tracking-wider"
+        className="font-black uppercase tracking-wider"
       >
         {label}
       </text>

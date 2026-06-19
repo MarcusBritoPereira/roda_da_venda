@@ -1,73 +1,158 @@
 @import "tailwindcss";
 
 @theme {
-  /* PALETA PRIMÁRIA VULP */
-  --color-vulp-electric: #4500f9;
-  --color-vulp-lilac: #cd82ff;
-  --color-vulp-magenta: #8e1aa1;
-  --color-vulp-deep: #2a042d;
-  --color-vulp-void: #14021c;
-  --color-vulp-white: #f1f1f1;
+  /* Design System Vulp v2.1 - Dual Theme Engine */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-border-vulp: var(--border-vulp);
+  
+  --color-vulp-brand: #8b5cf6;
+  --color-vulp-lilac: var(--vulp-lilac);
+  
+  --color-status-train: #f59e0b;
+  --color-status-promote: #8b5cf6;
+  --color-status-critical: #ef4444;
 
-  /* SEMÂNTICAS RODA DA VENDA */
-  --color-status-promote: #22c55e;
-  --color-status-train: #eab308;
-  --color-status-critical: #f97316;
-  --color-status-dismiss: #ef4444;
+  /* Sincronização com componentes legados */
+  --color-vulp-void: var(--background);
+  --color-vulp-surface: var(--surface);
+  --color-vulp-border: var(--border-vulp);
+  --color-ui-border: var(--border-vulp);
+  --color-ui-surface: var(--surface);
+  --color-ui-muted: var(--muted);
+  --color-text-title: var(--foreground);
+  --color-text-body: var(--muted);
+  --color-vulp-white: var(--foreground);
 
-  /* SUPERFÍCIES UI */
-  --color-ui-surface: #1a0a1f;
-  --color-ui-border: #3d1a4a;
-  --color-ui-muted: #7c5a8a;
-  --color-ui-disabled: #4a2e55;
+  --shadow-soft-elevation: 0 4px 20px rgba(0, 0, 0, 0.1);
+  --shadow-glow-purple: 0 0 15px rgba(124, 58, 237, 0.3);
+}
 
-  /* TIPOGRAFIA */
-  --font-display: "Inter", sans-serif;
-  --font-body: "Inter", sans-serif;
+/* 🖨️ ESTILOS DE IMPRESSÃO - ECONOMIA DE TINTA E ALTO CONTRASTE */
+@media print {
+  @page {
+    margin: 1.5cm;
+    size: A4;
+  }
 
-  /* SOMBRAS & GLOWS */
-  --shadow-glow-electric: 0 0 24px rgba(69, 0, 249, 0.5);
-  --shadow-glow-lilac: 0 0 16px rgba(205, 130, 255, 0.35);
-  --shadow-card: 0 4px 24px rgba(20, 2, 28, 0.6);
+  /* Esconder elementos de interface */
+  aside, 
+  nav, 
+  button, 
+  .no-print,
+  .btn-vulp,
+  header {
+    display: none !important;
+  }
 
-  /* GRADIENTES */
-  --background-vulp-dark: linear-gradient(135deg, #cd82ff 0%, #43148b 45%, #2a042b 100%);
-  --background-vulp-brand: linear-gradient(135deg, #cd82ff 0%, #944cfc 50%, #4500f9 100%);
+  /* Reset de Cores para Economia de Tinta */
+  body, 
+  html, 
+  main {
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Forçar bordas visíveis mas suaves */
+  .vulp-card {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+    margin-bottom: 1rem;
+    border-radius: 8px !important;
+  }
+
+  /* Ajuste de Texto para Contraste Máximo */
+  .text-foreground, 
+  .text-white,
+  h1, h2, h3, h4, p {
+    color: #000000 !important;
+  }
+
+  .text-muted {
+    color: #475569 !important;
+  }
+
+  /* Manter a cor da marca apenas em pontos críticos */
+  .text-vulp-brand {
+    color: #7c3aed !important;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* Garantir que os gráficos radar apareçam */
+  svg {
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* Layout de Grid para Impressão */
+  .grid {
+    display: block !important;
+  }
+
+  .md\:grid-cols-2 {
+    grid-template-columns: 1fr !important;
+  }
 }
 
 :root {
-  --background: #14021c;
-  --foreground: #f1f1f1;
+  /* LIGHT MODE PALETTE - ALTO CONTRASTE */
+  --background: #f8fafc;
+  --foreground: #020617;        /* Quase preto para leitura perfeita */
+  --surface: #ffffff;
+  --border-vulp: #cbd5e1;       /* Cinza mais forte para separação */
+  --muted: #334155;             /* Cinza escuro para metadados */
+  --vulp-lilac: #7c3aed;
+  --chart-line: rgba(15, 23, 42, 0.1); /* Escuro para o Modo Claro */
+  --shadow-elevation: none;     /* Removendo sombras conforme solicitado */
 }
 
-body {
+.dark {
+  /* DARK MODE PALETTE (Original Charcoal) */
+  --background: #0b0f14;
+  --foreground: #f8fafc;
+  --surface: #12171d;
+  --border-vulp: #1c2128;
+  --muted: #94a3b8;
+  --vulp-lilac: #c4b5fd;
+  --chart-line: rgba(255, 255, 255, 0.15); /* Claro para o Modo Escuro */
+  --shadow-elevation: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+@layer base {
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
+
+@layer components {
+  .vulp-card {
+    @apply bg-surface border border-border-vulp shadow-[var(--shadow-elevation)] rounded-xl;
+  }
+
+  .btn-vulp {
+    @apply bg-vulp-brand hover:brightness-110 text-white font-semibold rounded-lg px-4 py-2 transition-all shadow-glow-purple;
+  }
+}
+
+/* Scrollbar Adaptativa */
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
   background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-body);
 }
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
-  font-weight: 900;
-  letter-spacing: -0.02em;
+::-webkit-scrollbar-thumb {
+  background: var(--border-vulp);
+  border-radius: 10px;
 }
-
-/* Custom Utilities for VULP */
-@utility vulp-glow {
-  box-shadow: var(--shadow-glow-electric);
-}
-
-@utility vulp-card {
-  background: var(--color-ui-surface);
-  border: 1px solid var(--color-ui-border);
-  border-radius: 1rem;
-  box-shadow: var(--shadow-card);
-}
-
-@utility bg-vulp-brand {
-  background: var(--background-vulp-brand);
-}
-
-@utility bg-vulp-dark {
-  background: var(--background-vulp-dark);
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-vulp-brand);
 }

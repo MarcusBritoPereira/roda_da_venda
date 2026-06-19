@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { RadarWheel } from "@/components/charts/RadarWheel";
 import { saveLeaderCalibration } from "@/actions/leader";
-import { ChevronRight, Save, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { ChevronRight, Save, AlertTriangle, CheckCircle2, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
+import { useRouter } from "next/navigation";
 
 interface Area {
   id: string;
@@ -27,6 +28,33 @@ export function CalibrationForm({ sellerName, areas, evaluationId }: Calibration
   const [currentStep, setCurrentStep] = useState(0);
   const [leaderScores, setLeaderScores] = useState<Record<string, number>>({});
   const [comments, setComments] = useState<Record<string, string>>({});
+  const [isSaving, setIsSaving] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const router = useRouter();
+  
+  const handleFinalize = async () => {
+    setIsSaving(true);
+    
+    // Preparar o pacote completo de calibragem
+    const calibrations = areas.map(a => ({
+      areaId: a.id,
+      areaName: a.name,
+      score: leaderScores[a.id] || a.self_score,
+      comment: comments[a.id] || "Calibragem realizada pelo líder."
+    }));
+
+    const result = await saveLeaderCalibration(evaluationId, calibrations);
+
+    if (result?.success) {
+      setIsSuccess(true);
+      setTimeout(() => {
+        router.push(`/leader/pdi-tracking/${evaluationId}`);
+      }, 2500);
+    } else {
+      setIsSaving(false);
+      alert("Erro ao salvar: " + (result?.error || "Falha na comunicação"));
+    }
+  };
   
   const area = areas[currentStep];
   const currentLeaderScore = leaderScores[area.id] || 0;
@@ -156,13 +184,36 @@ export function CalibrationForm({ sellerName, areas, evaluationId }: Calibration
           ) : (
             <Button 
               type="button"
-              onClick={() => void saveLeaderCalibration(evaluationId, currentLeaderScore || area.self_score, comments[area.id] || "")}
+              disabled={isSaving}
+              onClick={handleFinalize}
               className="rounded-none bg-status-promote px-12 shadow-glow-electric border-none"
             >
-              Salvar Calibragem <Save size={18} className="ml-2" />
+              {isSaving ? (
+                <>Analisando... <Loader2 size={18} className="ml-2 animate-spin" /></>
+              ) : (
+                <>Finalizar Calibragem <Save size={18} className="ml-2" /></>
+              )}
             </Button>
           )}
         </div>
+
+        {/* Overlay de Sucesso */}
+        {isSuccess && (
+          <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-md flex items-center justify-center animate-in fade-in zoom-in duration-300">
+            <div className="text-center space-y-6 max-w-md p-8">
+              <div className="w-24 h-24 bg-status-promote/20 rounded-full flex items-center justify-center mx-auto mb-8 shadow-glow-electric">
+                <CheckCircle2 size={48} className="text-status-promote" />
+              </div>
+              <h2 className="text-4xl font-black italic uppercase italic text-vulp-white tracking-tighter">Performance Calibrada!</h2>
+              <p className="text-ui-muted text-sm leading-relaxed">
+                As notas foram processadas e o **PDI de Inteligência** já foi atribuído ao vendedor com base no maior gap identificado.
+              </p>
+              <div className="pt-8">
+                 <p className="text-[10px] text-vulp-brand uppercase font-bold tracking-widest animate-pulse">Redirecionando para o Dashboard...</p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Coluna Direita: Radar Real-time */}
@@ -188,7 +239,7 @@ export function CalibrationForm({ sellerName, areas, evaluationId }: Calibration
                   <span className="w-2 h-2 bg-vulp-brand" /> Autoavaliação
                 </span>
                 <span className="text-[10px] font-bold text-ui-muted uppercase tracking-widest flex items-center gap-2">
-                  <span className="w-2 h-2 border border-dashed border-status-dismiss" /> Sua Calibragem
+                  <span className="w-2 h-2 border border-dashed border-vulp-brand" /> Sua Calibragem
                 </span>
               </div>
               

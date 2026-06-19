@@ -19,11 +19,16 @@ export default async function IndividualCalibrationPage({ params }: { params: Pr
     real_metric_value: 10 + (index * 7),
     threshold: 25
   })) : [
-    { id: '1', name: 'Conversão', self_score: 8, justification: "Minha taxa de fechamento subiu 10% este mês.", real_metric_value: 22, threshold: 25 },
-    { id: '2', name: 'Ticket Médio', self_score: 6, justification: "Foquei em volume, o que baixou um pouco o ticket médio.", real_metric_value: 4500, threshold: 5000 },
-    { id: '3', name: 'Abordagem', self_score: 9, justification: "Recebi muitos elogios na primeira abordagem dos clientes.", real_metric_value: 85, threshold: 80 },
-    { id: '4', name: 'Volume', self_score: 5, justification: "Tive problemas pessoais e meu volume de ligações caiu.", real_metric_value: 120, threshold: 150 },
-    { id: '5', name: 'Follow-up', self_score: 7, justification: "Mantive a régua de contato em dia.", real_metric_value: 92, threshold: 95 }
+    { id: '1', name: 'Conversão', self_score: 8, justification: "Taxa de fechamento em alta.", real_metric_value: 22, threshold: 25 },
+    { id: '2', name: 'Ticket Médio', self_score: 6, justification: "Baixou um pouco para ganhar volume.", real_metric_value: 4500, threshold: 5000 },
+    { id: '3', name: 'Abordagem', self_score: 9, justification: "Primeiro contato excelente.", real_metric_value: 85, threshold: 80 },
+    { id: '4', name: 'Volume', self_score: 5, justification: "Volume de ligações caiu na última semana.", real_metric_value: 120, threshold: 150 },
+    { id: '5', name: 'Follow-up', self_score: 7, justification: "Régua de contato mantida.", real_metric_value: 92, threshold: 95 },
+    { id: '6', name: 'Produtividade', self_score: 8, justification: "Uso eficiente do tempo de trabalho.", real_metric_value: 88, threshold: 85 },
+    { id: '7', name: 'Comunicação', self_score: 7, justification: "Clareza nas propostas enviadas.", real_metric_value: 75, threshold: 80 },
+    { id: '8', name: 'Execução', self_score: 6, justification: "Processo seguido conforme manual.", real_metric_value: 70, threshold: 80 },
+    { id: '9', name: 'Disciplina', self_score: 9, justification: "Pontualidade e entrega de relatórios.", real_metric_value: 95, threshold: 90 },
+    { id: '10', name: 'Liderança', self_score: 5, justification: "Potencial de auxílio aos novos membros.", real_metric_value: 50, threshold: 60 }
   ];
 
   return (

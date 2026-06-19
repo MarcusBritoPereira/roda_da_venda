@@ -19,12 +19,25 @@ interface MissionLogProps {
 
 export function MissionLog({ missions }: MissionLogProps) {
   
-  // Mock se estiver vazio para preview
-  const displayMissions = missions.length > 0 ? missions : [
-    { id: '1', title: 'Treinamento de Objeções', description: 'Assistir aula de contorno de objeções de preço.', deadline: '2026-05-10', status: 'completed' },
-    { id: '2', title: 'Aumentar Follow-up', description: 'Garantir 5 contatos por lead no CRM.', deadline: '2026-05-15', status: 'in_progress' },
-    { id: '3', title: 'Limpeza de Pipeline', description: 'Remover leads inativos há mais de 30 dias.', deadline: '2026-05-20', status: 'pending' }
-  ] as PDI[];
+  const displayMissions = missions;
+
+  if (displayMissions.length === 0) {
+    return (
+      <Card className="rounded-none border-ui-border bg-ui-surface/5 h-full">
+        <CardHeader className="flex flex-row items-center justify-between border-b border-ui-border/50 pb-4">
+          <div>
+            <CardTitle className="text-xl font-black italic uppercase tracking-tight">Log de Missões (PDI)</CardTitle>
+            <p className="text-[10px] text-ui-muted uppercase font-bold tracking-widest">Nenhuma missão atribuída no momento</p>
+          </div>
+          <Trophy size={24} className="text-vulp-white/10" />
+        </CardHeader>
+        <CardContent className="p-12 flex flex-col items-center justify-center text-center opacity-20">
+          <Clock size={48} className="mb-4" />
+          <p className="text-xs uppercase font-bold tracking-widest">O seu plano aparecerá aqui após a calibragem do líder.</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const getStatusIcon = (status: string) => {
     switch (status) {

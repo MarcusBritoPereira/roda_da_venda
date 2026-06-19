@@ -43,7 +43,7 @@ export function EvaluationForm({ areas, cycleId }: EvaluationFormProps) {
         </div>
         <div className="text-right">
           <p className="text-[10px] text-ui-muted uppercase font-bold tracking-widest">Peso da Área</p>
-          <p className="text-2xl font-mono font-bold">x2.0</p>
+          <p className="text-2xl font-mono font-bold">x2</p>
         </div>
       </div>
 

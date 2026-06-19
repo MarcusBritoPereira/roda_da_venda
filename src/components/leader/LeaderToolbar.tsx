@@ -2,7 +2,8 @@
 
 import React from "react";
 import { Button } from "@/components/ui/Button";
-import { Filter, Download, ChevronDown } from "lucide-react";
+import { Filter, Printer, ChevronDown } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface AreaItem {
   id: string;
@@ -19,19 +20,22 @@ interface LeaderToolbarProps {
 }
 
 export function LeaderToolbar({ areas, teamData }: LeaderToolbarProps) {
-  const handleExport = () => {
-    const headers = ["Nome,Auto-Score,Fator Realidade,Status\n"];
-    const rows = teamData.map((m) => `${m.full_name},7.4,-0.8,Pendente\n`);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const currentArea = searchParams.get('area');
 
-    const blob = new Blob([...headers, ...rows], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.setAttribute('hidden', '');
-    a.setAttribute('href', url);
-    a.setAttribute('download', 'relatorio_performance_vulp.csv');
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+  const handleExport = () => {
+    window.print();
+  };
+
+  const handleFilter = (areaId: string | null) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (areaId) {
+      params.set('area', areaId);
+    } else {
+      params.delete('area');
+    }
+    router.push(`?${params.toString()}`);
   };
 
   return (
@@ -44,16 +48,22 @@ export function LeaderToolbar({ areas, teamData }: LeaderToolbarProps) {
             <ChevronDown size={12} className="ml-2 opacity-50" />
           </Button>
 
-          <div className="absolute top-full left-0 mt-1 w-48 bg-vulp-void border border-ui-border hidden group-hover:block z-50 shadow-glow-electric/20">
+          <div className="absolute top-full left-0 mt-1 w-48 bg-background border border-border-vulp hidden group-hover:block z-50 shadow-2xl rounded-lg overflow-hidden">
             {areas.map((area) => (
               <button
                 key={area.id}
-                className="w-full text-left px-4 py-2 text-[10px] uppercase font-bold tracking-widest hover:bg-vulp-brand/10 hover:text-vulp-lilac transition-colors"
+                onClick={() => handleFilter(area.id)}
+                className={`w-full text-left px-4 py-3 text-[10px] uppercase font-bold tracking-widest transition-colors ${
+                  currentArea === area.id ? 'bg-vulp-brand text-white' : 'hover:bg-vulp-brand/10 text-foreground'
+                }`}
               >
                 {area.name}
               </button>
             ))}
-            <button className="w-full text-left px-4 py-2 text-[10px] uppercase font-bold tracking-widest border-t border-ui-border text-status-critical hover:bg-status-critical/5">
+            <button 
+              onClick={() => handleFilter(null)}
+              className="w-full text-left px-4 py-3 text-[10px] uppercase font-bold tracking-widest border-t border-border-vulp text-status-dismiss hover:bg-status-dismiss/10 transition-colors"
+            >
               Limpar Filtros
             </button>
           </div>
@@ -63,9 +73,9 @@ export function LeaderToolbar({ areas, teamData }: LeaderToolbarProps) {
           onClick={handleExport}
           variant="outline"
           size="sm"
-          className="rounded-none text-[10px] uppercase font-bold tracking-widest hover:bg-vulp-brand/10 hover:border-vulp-brand hover:text-vulp-lilac transition-all"
+          className="vulp-button-outline border-vulp-brand/50 text-vulp-brand"
         >
-          <Download size={14} className="mr-2" /> Exportar Relatório
+          <Printer size={14} className="mr-2" /> Imprimir Relatório
         </Button>
       </div>
 

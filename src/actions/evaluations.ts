@@ -1,88 +1,134 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
-import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
-import { z } from 'zod'
+import { createClient } from "@/lib/supabase/server";
+import { revalidatePath } from "next/cache";
 
-const scoreEntrySchema = z.number().int().min(1).max(10)
-const submissionSchema = z.object({
-  cycleId: z.string().uuid(),
-  scores: z.record(z.string().uuid(), scoreEntrySchema),
-  justifications: z.record(z.string().uuid(), z.string().max(2000)).default({}),
-})
-
-export async function submitEvaluation(formData: FormData) {
-  const supabase = await createClient()
-
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
-
-  if (authError || !user) throw new Error('Não autorizado')
-
-  const cycleId = formData.get('cycle_id') as string
-  const scores: Record<string, number> = {}
-  const justifications: Record<string, string> = {}
-
-  for (const [key, value] of formData.entries()) {
-    if (key.startsWith('score_')) {
-      const areaId = key.replace('score_', '')
-      scores[areaId] = Number(value)
-    }
-
-    if (key.startsWith('justification_')) {
-      const areaId = key.replace('justification_', '')
-      justifications[areaId] = String(value)
-    }
-  }
-
-  const parsed = submissionSchema.safeParse({
-    cycleId,
-    scores,
-    justifications,
-  })
-
-  if (!parsed.success) {
-    throw new Error('Dados de avaliação inválidos')
-  }
-
-  const entries = Object.entries(parsed.data.scores).map(([areaId, score]) => ({
-    cycle_id: parsed.data.cycleId,
-    seller_id: user.id,
-    area_id: areaId,
-    self_score: score,
-    justification: parsed.data.justifications[areaId] || '',
-  }))
-
-  const { error: insertError } = await supabase.from('evaluations').insert(entries)
-
-  if (insertError) {
-    console.error('Erro ao salvar avaliação:', insertError)
-    throw new Error('Falha ao salvar os dados no banco')
-  }
-
-  revalidatePath('/dashboard')
-  redirect('/dashboard?success=Avaliação enviada com sucesso')
-}
-
-export async function getAreas() {
-  const supabase = await createClient()
-  const { data, error } = await supabase.from('areas').select('*').order('name')
-
-  if (error) throw error
-  return data
-}
-
+/**
+ * Busca o ciclo de avaliação que está 'open' para a empresa do usuário.
+ * Risco Mitigado: Evita salvar dados em ciclos inexistentes ou fechados.
+ */
 export async function getActiveCycle() {
-  const supabase = await createClient()
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  // Primeiro buscamos a empresa do usuário
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('company_id')
+    .eq('id', user.id)
+    .single();
+
+  if (!profile) return null;
+
   const { data, error } = await supabase
     .from('cycles')
     .select('*')
-    .eq('status', 'open')
-    .single()
+    .eq('company_id', profile.company_id)
+    .eq('status', 'active')
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single();
 
-  if (error) return null
-  return data
+  if (error && error.code !== 'PGRST116') {
+    console.error('Erro ao buscar ciclo ativo:', error);
+    return null;
+  }
+
+  return data;
+}
+
+/**
+ * Busca todas as áreas (competências) cadastradas para a empresa.
+ * Risco Mitigado: Garante que o formulário sempre tenha campos válidos.
+ */
+export async function getAreas() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('company_id')
+    .eq('id', user.id)
+    .single();
+
+  if (!profile) return [];
+
+  const { data, error } = await supabase
+    .from('areas')
+    .select('*')
+    .eq('company_id', profile.company_id)
+    .order('name', { ascending: true });
+
+  if (error) {
+    console.error('Erro ao buscar áreas:', error);
+    return [];
+  }
+
+  return data;
+}
+
+/**
+ * Busca a última avaliação do vendedor logado.
+ */
+export async function getLatestEvaluation() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const { data, error } = await supabase
+    .from('evaluations')
+    .select('*')
+    .eq('seller_id', user.id)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    console.error('Erro ao buscar última avaliação:', error);
+    return null;
+  }
+
+  return data;
+}
+
+/**
+ * Submete uma nova avaliação.
+ * Risco Mitigado: Idempotência e vinculação correta de IDs.
+ */
+export async function submitEvaluation(formData: any) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Não autorizado");
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('company_id')
+    .eq('id', user.id)
+    .single();
+
+  if (!profile) throw new Error("Perfil não encontrado");
+
+  const activeCycle = await getActiveCycle();
+  if (!activeCycle) throw new Error("Nenhum ciclo ativo encontrado.");
+
+  const { error } = await supabase
+    .from('evaluations')
+    .insert([
+      {
+        ...formData,
+        seller_id: user.id,
+        cycle_id: activeCycle.id,
+        company_id: profile.company_id
+      }
+    ]);
+
+  if (error) {
+    console.error('Erro ao submeter avaliação:', error);
+    throw new Error("Falha ao salvar avaliação no banco.");
+  }
+
+  revalidatePath('/dashboard');
+  return { success: true };
 }

@@ -1,140 +1,122 @@
 import React from "react";
-import DashboardLayout from "@/components/layout/DashboardLayout";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
+import { 
+  Users, 
+  Target, 
+  Activity, 
+  ShieldCheck, 
+  Zap, 
+  Database, 
+  Key, 
+  BarChart3,
+  Search,
+  Plus
+} from "lucide-react";
+import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { TrendingUp, Users, Target, Activity, Settings, ChevronRight } from "lucide-react";
-import Link from "next/link";
 
-export default async function AdminDashboardPage() {
-  // Em produção, aqui buscaríamos dados agregados do Supabase
-  const stats = {
-    totalSellers: 24,
-    activeCycles: 1,
-    globalAvg: 7.2,
-    pdiCompletion: 68
-  };
+export default function AdminDashboardPage() {
+  // Dados simulados baseados na estrutura do banco
+  const stats = [
+    { label: "Vendedores Ativos", value: "47", change: "+12%", color: "text-vulp-brand" },
+    { label: "PDIs em Evolução", value: "11", change: "-2%", color: "text-vulp-lilac" },
+    { label: "Ciclos Concluídos", value: "3", change: "0%", color: "text-ui-muted" },
+    { label: "Média Global", value: "7.2", change: "+0.5", color: "text-vulp-brand" },
+  ];
 
   return (
-    <DashboardLayout>
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
-        <div>
-          <h1 className="text-sm font-bold text-ui-muted uppercase tracking-[0.4em] mb-2">Painel de Controle</h1>
-          <h2 className="text-4xl font-black italic uppercase">Administração Global</h2>
+    <div className="min-h-screen bg-[#0a0a0a] text-white p-8">
+      {/* Top Header - Estilo Supabase */}
+      <div className="flex justify-between items-center mb-12 border-b border-white/5 pb-8">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 bg-vulp-brand rounded-xl flex items-center justify-center font-black text-2xl shadow-glow-electric">V</div>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Painel de Controle</h1>
+            <p className="text-xs text-ui-muted uppercase font-black tracking-widest mt-1">Visão Geral da Organização</p>
+          </div>
         </div>
-        <div className="flex gap-4">
-          <Link href="/admin/cycles">
-            <Button className="rounded-none bg-vulp-brand hover:shadow-glow-electric transition-all uppercase text-[10px] font-bold tracking-widest px-8">
-              Gerenciar Ciclos
-            </Button>
-          </Link>
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-ui-muted" size={16} />
+            <input 
+              placeholder="Buscar vendedor ou PDI..." 
+              className="bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-vulp-brand/50 transition-all w-64"
+            />
+          </div>
+          <Button className="bg-vulp-brand hover:shadow-glow-electric rounded-lg font-bold text-xs">
+            <Plus size={16} className="mr-2" /> Novo Ciclo
+          </Button>
         </div>
       </div>
 
-      {/* Grid de Stats Rápidas */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-        <Card className="rounded-none border-ui-border bg-ui-surface/20 p-6">
-          <div className="flex justify-between items-start mb-4">
-            <div className="p-2 bg-vulp-brand/10 text-vulp-lilac">
-              <Users size={20} />
-            </div>
-            <span className="text-[10px] text-status-promote font-bold">+12%</span>
+      {/* Grid de Conexões (Top Cards) */}
+      <div className="grid md:grid-cols-5 gap-4 mb-12">
+        {[
+          { label: "Framework", icon: <Database size={18} />, sub: "Use a client library" },
+          { label: "Direct", icon: <Activity size={18} />, sub: "Connection string" },
+          { label: "ORM", icon: <Zap size={18} />, sub: "Third-party library" },
+          { label: "MCP", icon: <Target size={18} />, sub: "Connect your agent" },
+          { label: "API Keys", icon: <Key size={18} />, sub: "Manage project keys" },
+        ].map((item, i) => (
+          <div key={i} className="bg-white/5 border border-white/10 p-6 rounded-lg group hover:border-vulp-brand/30 transition-all cursor-pointer">
+            <div className="text-ui-muted group-hover:text-vulp-brand transition-colors mb-4">{item.icon}</div>
+            <h4 className="text-sm font-bold mb-1">{item.label}</h4>
+            <p className="text-[10px] text-ui-muted">{item.sub}</p>
           </div>
-          <p className="text-[10px] text-ui-muted uppercase font-bold tracking-widest mb-1">Total de Vendedores</p>
-          <p className="text-3xl font-black italic">{stats.totalSellers}</p>
-        </Card>
-
-        <Card className="rounded-none border-ui-border bg-ui-surface/20 p-6">
-          <div className="flex justify-between items-start mb-4">
-            <div className="p-2 bg-status-train/10 text-status-train">
-              <Target size={20} />
-            </div>
-            <span className="text-[10px] text-ui-muted font-bold italic">ATIVO</span>
-          </div>
-          <p className="text-[10px] text-ui-muted uppercase font-bold tracking-widest mb-1">Ciclos Ativos</p>
-          <p className="text-3xl font-black italic">{stats.activeCycles}</p>
-        </Card>
-
-        <Card className="rounded-none border-ui-border bg-ui-surface/20 p-6">
-          <div className="flex justify-between items-start mb-4">
-            <div className="p-2 bg-vulp-lilac/10 text-vulp-lilac">
-              <Activity size={20} />
-            </div>
-            <span className="text-[10px] text-status-promote font-bold">ALTO</span>
-          </div>
-          <p className="text-[10px] text-ui-muted uppercase font-bold tracking-widest mb-1">Média Global</p>
-          <p className="text-3xl font-black italic">{stats.globalAvg}</p>
-        </Card>
-
-        <Card className="rounded-none border-ui-border bg-ui-surface/20 p-6">
-          <div className="flex justify-between items-start mb-4">
-            <div className="p-2 bg-status-promote/10 text-status-promote">
-              <TrendingUp size={20} />
-            </div>
-            <span className="text-[10px] text-ui-muted font-bold">{stats.pdiCompletion}%</span>
-          </div>
-          <p className="text-[10px] text-ui-muted uppercase font-bold tracking-widest mb-1">Conclusão de PDIs</p>
-          <div className="w-full bg-ui-border h-1 mt-2">
-            <div className="bg-status-promote h-full" style={{ width: `${stats.pdiCompletion}%` }} />
-          </div>
-        </Card>
+        ))}
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-8">
-        {/* Gráfico de Evolução da Empresa */}
-        <Card className="lg:col-span-2 rounded-none border-ui-border bg-ui-surface/5 p-8 h-[400px] flex flex-col">
-          <CardHeader className="p-0 mb-8">
-            <CardTitle className="text-xl italic font-black uppercase">Evolução de Performance</CardTitle>
-            <CardDescription className="text-[10px] text-ui-muted uppercase font-bold tracking-widest">Comparativo dos últimos 6 meses</CardDescription>
-          </CardHeader>
-          <div className="flex-1 flex items-end gap-2 px-4">
-             {/* Simulação de gráfico de barras industrial */}
-             {[4.2, 5.8, 5.1, 6.4, 7.0, 7.2].map((val, i) => (
-               <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
-                 <div 
-                   className="w-full bg-vulp-brand/20 border-t-2 border-vulp-brand transition-all group-hover:bg-vulp-brand/40 group-hover:shadow-glow-electric" 
-                   style={{ height: `${val * 10}%` }}
-                 />
-                 <span className="text-[8px] font-mono text-ui-muted uppercase">{['Nov', 'Dez', 'Jan', 'Fev', 'Mar', 'Abr'][i]}</span>
-               </div>
-             ))}
-          </div>
-        </Card>
+      {/* Título da Seção */}
+      <div className="flex items-center gap-3 mb-8">
+        <BarChart3 className="text-vulp-brand" size={20} />
+        <h2 className="text-lg font-bold">Métricas em Tempo Real</h2>
+        <div className="h-px bg-white/5 flex-1" />
+        <select className="bg-transparent text-xs text-ui-muted border-none focus:ring-0">
+          <option>Last 60 minutes</option>
+          <option>Last 24 hours</option>
+        </select>
+      </div>
 
-        {/* Alertas Administrativos */}
-        <div className="space-y-6">
-          <Card className="rounded-none border-status-critical/30 bg-status-critical/5 p-6">
-            <h4 className="text-xs font-black uppercase tracking-widest text-status-critical mb-4 flex items-center gap-2">
-              <Activity size={14} /> Alerta de Gap
-            </h4>
-            <p className="text-xs text-ui-muted leading-relaxed mb-4">
-              A área de **"Follow-up"** está 30% abaixo da meta média da empresa. Recomendamos revisar o treinamento de CRM.
-            </p>
-            <Button variant="ghost" size="sm" className="p-0 h-auto text-[10px] font-bold uppercase text-status-critical hover:bg-transparent">
-              Ver Detalhes <ChevronRight size={12} className="ml-1" />
-            </Button>
-          </Card>
+      {/* Grid de Gráficos (Bento Style) */}
+      <div className="grid md:grid-cols-4 gap-6">
+        {stats.map((stat, i) => (
+          <Card key={i} className="bg-[#111111] border-white/5 rounded-xl overflow-hidden hover:border-vulp-brand/20 transition-all group">
+            <div className="p-6">
+              <p className="text-[10px] font-black uppercase tracking-widest text-ui-muted mb-4">{stat.label}</p>
+              <div className="flex items-baseline gap-4 mb-8">
+                <span className="text-5xl font-black italic tracking-tighter">{stat.value}</span>
+                <span className={`text-[10px] font-bold ${stat.change.startsWith('+') ? 'text-status-promote' : 'text-status-critical'}`}>
+                  {stat.change}
+                </span>
+              </div>
 
-          <Card className="rounded-none border-ui-border bg-ui-surface/5 p-6">
-            <h4 className="text-xs font-black uppercase tracking-widest text-vulp-brand mb-4 flex items-center gap-2">
-              <Settings size={14} /> Configurações Rápidas
-            </h4>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center text-[10px] uppercase font-bold tracking-widest border-b border-ui-border/30 pb-2">
-                <span>Fator Realidade Global</span>
-                <span className="text-status-promote text-[8px]">ATIVADO</span>
+              {/* Simulação de Gráfico de Barras (Roxo Vulp) */}
+              <div className="flex items-end gap-1.5 h-32">
+                {[40, 20, 60, 30, 80, 45, 90, 35, 50, 75].map((h, j) => (
+                  <div 
+                    key={j} 
+                    className="flex-1 bg-vulp-brand/20 group-hover:bg-vulp-brand transition-all duration-500 rounded-t-sm"
+                    style={{ height: `${h}%`, opacity: (j / 10) + 0.3 }}
+                  />
+                ))}
               </div>
-              <div className="flex justify-between items-center text-[10px] uppercase font-bold tracking-widest border-b border-ui-border/30 pb-2">
-                <span>Autoavaliações Pendentes</span>
-                <span className="text-vulp-lilac">08</span>
-              </div>
-              <div className="flex justify-between items-center text-[10px] uppercase font-bold tracking-widest">
-                <span>Membros sem Líder</span>
-                <span className="text-status-critical">02</span>
+              <div className="flex justify-between mt-4 text-[8px] text-ui-muted font-mono">
+                <span>2:14PM</span>
+                <span>3:04PM</span>
               </div>
             </div>
           </Card>
-        </div>
+        ))}
       </div>
-    </DashboardLayout>
+
+      {/* Footer Industrial */}
+      <div className="mt-16 flex justify-between items-center text-[10px] text-ui-muted font-bold uppercase tracking-widest border-t border-white/5 pt-8">
+        <div className="flex gap-8">
+          <span className="hover:text-vulp-brand cursor-pointer">Documentação</span>
+          <span className="hover:text-vulp-brand cursor-pointer">API Status</span>
+          <span className="hover:text-vulp-brand cursor-pointer">Suporte</span>
+        </div>
+        <div>VULP INFRASTRUCTURE DASHBOARD</div>
+      </div>
+    </div>
   );
 }

@@ -39,7 +39,7 @@ export default async function EvaluationReportPage({ params }: { params: Promise
         <div className="flex justify-between items-start mb-16 relative z-10">
           <div>
             <h1 className="text-4xl font-black italic uppercase tracking-tighter mb-2">Relatório de Performance</h1>
-            <p className="text-xs font-bold uppercase tracking-[0.3em] text-slate-500">Roda da Venda 2.0 | VULP Business</p>
+            <p className="text-xs font-bold uppercase tracking-[0.3em] text-slate-500">Roda da Venda | VULP Business</p>
           </div>
           <div className="text-right">
             <p className="text-[10px] font-bold uppercase text-slate-400">Ciclo de Avaliação</p>
